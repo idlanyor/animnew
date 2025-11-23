@@ -3,9 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { MovieItem } from '@/lib/api';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Star } from 'lucide-react';
 
 interface MovieCardProps {
   movie: MovieItem;
@@ -14,7 +11,7 @@ interface MovieCardProps {
 export default function MovieCard({ movie }: MovieCardProps) {
   return (
     <Link href={`/movie/${movie.slug}`} className="group block touch-manipulation">
-      <Card className="bg-gray-800 border-gray-700 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 active:scale-95 hover:border-blue-500/50">
+      <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 active:scale-95">
         <div className="aspect-[2/3] sm:aspect-[3/4] relative overflow-hidden">
           <Image
             src={movie.poster && movie.poster.trim() !== ''
@@ -26,30 +23,29 @@ export default function MovieCard({ movie }: MovieCardProps) {
             className="object-cover group-hover:scale-110 transition-transform duration-300"
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
           />
-          <Badge className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[10px] sm:text-xs">
+          <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-semibold">
             {movie.type}
-          </Badge>
+          </div>
 
           {/* Display score if available */}
           {movie.score && (
-            <Badge className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-yellow-600 hover:bg-yellow-700 text-[10px] sm:text-xs">
-              <Star className="mr-0.5 sm:mr-1 h-2.5 w-2.5 sm:h-3 sm:w-3" fill="currentColor" />
-              {movie.score}
-            </Badge>
+            <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-yellow-600 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-bold flex items-center gap-0.5 sm:gap-1">
+              ⭐ {movie.score}
+            </div>
           )}
 
           {/* Display status or duration */}
-          <Badge variant="secondary" className="absolute bottom-1.5 sm:bottom-2 left-1.5 sm:left-2 bg-black/70 hover:bg-black/80 text-[10px] sm:text-xs">
+          <div className="absolute bottom-1.5 sm:bottom-2 left-1.5 sm:left-2 bg-black bg-opacity-70 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs">
             {movie.status || movie.release || 'N/A'}
-          </Badge>
+          </div>
 
           {movie.duration && (
-            <Badge className="absolute bottom-1.5 sm:bottom-2 right-1.5 sm:right-2 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-[10px] sm:text-xs">
+            <div className="absolute bottom-1.5 sm:bottom-2 right-1.5 sm:right-2 bg-gradient-to-r from-yellow-500 to-amber-600 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs">
               {movie.duration}
-            </Badge>
+            </div>
           )}
         </div>
-        <CardContent className="p-2.5 sm:p-3 md:p-4">
+        <div className="p-2.5 sm:p-3 md:p-4">
           <h3 className="text-white font-semibold text-xs sm:text-sm mb-1.5 sm:mb-2 line-clamp-2 group-hover:text-yellow-400 transition-colors leading-tight">
             {movie.title}
           </h3>
@@ -62,14 +58,14 @@ export default function MovieCard({ movie }: MovieCardProps) {
           ) : movie.genreList && movie.genreList.length > 0 ? (
             <div className="flex flex-wrap gap-1">
               {movie.genreList.slice(0, 2).map((genre) => (
-                <Badge key={genre.genreId} variant="secondary" className="text-[9px] sm:text-xs bg-gray-700 text-gray-300 hover:bg-gray-600">
+                <span key={genre.genreId} className="text-[9px] sm:text-xs bg-gray-700 text-gray-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
                   {genre.title}
-                </Badge>
+                </span>
               ))}
             </div>
           ) : null}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 }

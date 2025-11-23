@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Play, Heart } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
 
 export default function Footer() {
   return (
@@ -97,8 +96,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <Separator className="mt-8 bg-gray-800" />
-        <div className="mt-8 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
             © 2025 KanataAnimeV2. All rights reserved.
           </p>
