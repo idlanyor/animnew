@@ -7,6 +7,7 @@ import TodayAnimeCarousel from '@/components/TodayAnimeCarousel';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Play, TrendingUp, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 // Helper function to get current day in Indonesian
 const getDayInIndonesian = (): string => {
@@ -62,12 +63,12 @@ export default function HomePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 text-xl mb-4">{error}</p>
-          <button
+          <Button
             onClick={() => window.location.reload()}
-            className="bg-gradient-to-r from-yellow-500 to-blue-600 hover:from-yellow-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+            className="bg-gradient-to-r from-yellow-500 to-blue-600 hover:from-yellow-600 hover:to-blue-700"
           >
             Try Again
-          </button>
+          </Button>
         </div>
       </div>
     );
