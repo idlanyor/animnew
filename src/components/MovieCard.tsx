@@ -3,9 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { MovieItem } from '@/lib/api';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Star } from 'lucide-react';
 
 interface MovieCardProps {
   movie: MovieItem;
@@ -35,7 +32,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
 
           <Badge className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 glass-badge bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
             {movie.type}
-          </Badge>
+          </div>
 
           {/* Display score if available */}
           {movie.score && (
@@ -48,12 +45,12 @@ export default function MovieCard({ movie }: MovieCardProps) {
           {/* Display status or duration */}
           <Badge variant="secondary" className="absolute bottom-1.5 sm:bottom-2 left-1.5 sm:left-2 glass-dark text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
             {movie.status || movie.release || 'N/A'}
-          </Badge>
+          </div>
 
           {movie.duration && (
             <Badge className="absolute bottom-1.5 sm:bottom-2 right-1.5 sm:right-2 glass-badge bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
               {movie.duration}
-            </Badge>
+            </div>
           )}
         </div>
         <CardContent className="p-2 sm:p-2.5 md:p-3 glass-card border-t border-white/5">
@@ -71,12 +68,12 @@ export default function MovieCard({ movie }: MovieCardProps) {
               {movie.genreList.slice(0, 2).map((genre) => (
                 <Badge key={genre.genreId} variant="secondary" className="glass-badge text-[9px] sm:text-[10px] bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 px-1.5 py-0.5">
                   {genre.title}
-                </Badge>
+                </span>
               ))}
             </div>
           ) : null}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 }

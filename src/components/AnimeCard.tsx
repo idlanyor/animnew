@@ -4,14 +4,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { AnimeItem } from '@/lib/api';
 import { Star, Play, Calendar, Clock, Zap } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 interface AnimeCardProps {
   anime: AnimeItem;
 }
 
 export default function AnimeCard({ anime }: AnimeCardProps) {
+  // Check if this is ongoing or complete anime based on available fields
   const isOngoing = anime.current_episode && anime.release_day;
   const isComplete = anime.episode_count && anime.rating;
 
@@ -144,7 +143,7 @@ export default function AnimeCard({ anime }: AnimeCardProps) {
             backgroundSize: '50px 50px'
           }}></div>
         </div>
-      </Card>
+      </div>
     </Link>
   );
 }
