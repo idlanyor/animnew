@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack --port 3127",
     "build": "next build",
-    "start": "next start --port 3127",
+    "start": "node server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -14,10 +14,11 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@videojs/themes": "^1.0.1",
     "axios": "^1.13.2",
+    "express": "^5.1.0",
     "lucide-react": "^0.537.0",
+    "minimatch": "^10.1.1",
     "next": "15.4.6",
     "next-pwa": "^5.6.0",
-    "minimatch": "latest",
     "next-video": "^2.5.1",
     "plyr": "^3.8.3",
     "react": "19.1.0",
