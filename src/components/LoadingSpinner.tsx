@@ -1,6 +1,5 @@
-'use client';
-
-import { Loader2 } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -16,7 +15,7 @@ export default function LoadingSpinner({ size = 'md', text }: LoadingSpinnerProp
 
   return (
     <div className="flex flex-col items-center justify-center p-8">
-      <Loader2 className={`${sizeClasses[size]} animate-spin text-blue-500 mb-2`} />
+      <FontAwesomeIcon icon={faSpinner} className={`${sizeClasses[size]} animate-spin text-blue-500 mb-2`} />
       {text && (
         <p className="text-gray-400 text-sm">{text}</p>
       )}
