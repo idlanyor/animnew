@@ -94,37 +94,73 @@ export default function MoviePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-yellow-500 via-amber-500 to-blue-600 py-12 sm:py-16 md:py-20">
-        <div className="absolute inset-0 bg-opacity-50"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-            Welcome to <span className="text-yellow-200 block sm:inline mt-2 sm:mt-0">KanataNimeV2 Movie</span>
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 max-w-3xl mx-auto px-2 leading-relaxed">
-            Discover and stream your favorite Japanese anime movies, Chinese donghua films,
-            and live-action anime adaptations in stunning quality. From classic anime
-            masterpieces to the latest releases, explore our curated collection.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <div className="mb-4 sm:mb-8 w-full">
-              <div className="relative max-w-2xl mx-auto">
-                <input
-                  type="text"
-                  placeholder="Search for movies..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-gray-800 to-gray-900
-                    border-2 border-yellow-500/30 rounded-xl text-white
-                    placeholder-gray-400
-                    focus:outline-none focus:ring-2 focus:ring-yellow-500
-                    focus:border-yellow-500 focus:shadow-[0_0_15px_rgba(234,179,8,0.35)]
-                    transition-all duration-300 ease-in-out
-                    text-base sm:text-lg backdrop-blur-sm
-                    hover:border-yellow-500/50 hover:shadow-[0_0_10px_rgba(234,179,8,0.2)]
-                    touch-manipulation"
-                />
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black">
+      {/* Hero Section with Glassmorphism */}
+      <section className="relative overflow-hidden py-16 sm:py-20 md:py-24 lg:py-28">
+        {/* Animated Background Gradients */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        </div>
+
+        {/* Glass overlay */}
+        <div className="absolute inset-0 backdrop-blur-3xl bg-gradient-to-b from-black/30 via-black/20 to-transparent"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Title with Glass Effect */}
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <div className="inline-block">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
+                <span className="bg-gradient-to-r from-white via-yellow-100 to-blue-100 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                  Welcome to
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-yellow-400 via-amber-300 to-blue-400 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(234,179,8,0.5)] animate-pulse">
+                  KanataNimeV2 Movie
+                </span>
+              </h1>
+            </div>
+
+            {/* Glass Description Card */}
+            <div className="max-w-3xl mx-auto">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500"></div>
+                <div className="relative glass-card p-6 sm:p-8 rounded-2xl border border-white/10">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed">
+                    Discover and stream your favorite <span className="text-yellow-400 font-semibold">Japanese anime movies</span>,
+                    <span className="text-blue-400 font-semibold"> Chinese donghua films</span>, and
+                    <span className="text-purple-400 font-semibold"> live-action adaptations</span> in stunning quality.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Glass Search Bar */}
+          <div className="max-w-3xl mx-auto">
+            <div className="relative group">
+              {/* Glow effect */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 via-blue-500 to-purple-500 rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+
+              {/* Search container */}
+              <div className="relative glass-card p-2 rounded-2xl border border-white/20">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search for movies..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-6 sm:px-8 py-4 sm:py-5 bg-transparent text-white placeholder-gray-400
+                      focus:outline-none text-base sm:text-lg md:text-xl
+                      transition-all duration-300"
+                  />
+                  <div className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2">
+                    <div className="glass-badge p-3 rounded-xl bg-gradient-to-r from-yellow-500/20 to-blue-500/20 border border-white/10">
+                      <Film className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -133,18 +169,30 @@ export default function MoviePage() {
       
       {/* Search Results Section */}
       {searchQuery.trim() && (
-        <section className="py-8 sm:py-12 md:py-16 bg-black">
+        <section className="py-8 sm:py-12 md:py-16 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-3">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                <Film className="text-yellow-400 flex-shrink-0" size={24} />
-                <span className="line-clamp-1">Search Results for &quot;{searchQuery}&quot;</span>
-              </h2>
+            {/* Glass Header */}
+            <div className="mb-8 sm:mb-10">
+              <div className="relative inline-block">
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-purple-500/20 blur-xl"></div>
+                <div className="relative glass-card px-6 py-4 rounded-2xl border border-white/10">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/20 to-purple-500/20">
+                      <Film className="text-yellow-400 flex-shrink-0" size={24} />
+                    </div>
+                    <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                      Search Results for &quot;{searchQuery}&quot;
+                    </span>
+                  </h2>
+                </div>
+              </div>
             </div>
 
             {searchLoading ? (
-              <div className="text-center py-12">
-                <LoadingSpinner size="lg" text="Searching movies..." />
+              <div className="text-center py-16">
+                <div className="glass-card inline-block px-8 py-6 rounded-2xl border border-white/10">
+                  <LoadingSpinner size="lg" text="Searching movies..." />
+                </div>
               </div>
             ) : searchResults.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
@@ -153,8 +201,10 @@ export default function MoviePage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-400 text-sm sm:text-base">No movies found for &quot;{searchQuery}&quot;</p>
+              <div className="text-center py-16">
+                <div className="glass-card inline-block px-8 py-6 rounded-2xl border border-white/10">
+                  <p className="text-gray-400 text-base sm:text-lg">No movies found for &quot;{searchQuery}&quot;</p>
+                </div>
               </div>
             )}
           </div>
@@ -163,13 +213,23 @@ export default function MoviePage() {
 
       {/* All Movies Section */}
       {!searchQuery.trim() && (
-        <section className="py-8 sm:py-12 md:py-16 bg-black">
+        <section className="py-8 sm:py-12 md:py-16 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6 sm:mb-8">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                <Film className="text-blue-400 flex-shrink-0" size={24} />
-                All Movies
-              </h2>
+            {/* Glass Header */}
+            <div className="mb-8 sm:mb-10">
+              <div className="relative inline-block">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 blur-xl"></div>
+                <div className="relative glass-card px-6 py-4 rounded-2xl border border-white/10">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
+                      <Film className="text-blue-400 flex-shrink-0" size={24} />
+                    </div>
+                    <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                      All Movies
+                    </span>
+                  </h2>
+                </div>
+              </div>
             </div>
 
             {movies.length > 0 ? (
@@ -180,78 +240,140 @@ export default function MoviePage() {
                   ))}
                 </div>
 
-                {/* Pagination Controls */}
-                <div className="flex flex-col sm:flex-row justify-center items-center mt-8 sm:mt-12 gap-3 sm:gap-4">
+                {/* Enhanced Glass Pagination */}
+                <div className="flex flex-col sm:flex-row justify-center items-center mt-12 sm:mt-16 gap-4">
+                  {/* Previous Button */}
                   <button
                     onClick={() => setCurrentPage(pagination.prevPage || currentPage)}
                     disabled={!pagination.hasPrevPage}
-                    className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-yellow-500 to-blue-600 hover:from-yellow-600 hover:to-blue-700 disabled:bg-gray-600 disabled:from-gray-600 disabled:to-gray-600
-                      disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm sm:text-base
-                      font-medium touch-manipulation active:scale-95"
+                    className="group relative w-full sm:w-auto overflow-hidden"
                   >
-                    Previous
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur"></div>
+                    <div className="relative glass-card px-6 sm:px-8 py-3 sm:py-4 rounded-xl border border-white/20
+                      disabled:opacity-50 disabled:cursor-not-allowed
+                      group-hover:border-cyan-400/50 transition-all duration-300">
+                      <span className="text-white font-medium text-sm sm:text-base bg-gradient-to-r from-white to-cyan-200 bg-clip-text group-hover:text-transparent transition-all">
+                        Previous
+                      </span>
+                    </div>
                   </button>
 
-                  <span className="text-white px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-blue-600/20 rounded-lg text-sm sm:text-base font-medium order-first sm:order-none border border-yellow-500/30">
-                    Page {pagination.currentPage} of {pagination.totalPages}
-                  </span>
+                  {/* Page Indicator */}
+                  <div className="relative group order-first sm:order-none">
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/30 to-blue-500/30 blur-lg"></div>
+                    <div className="relative glass-card px-6 py-3 rounded-xl border border-white/20">
+                      <span className="text-white font-semibold text-sm sm:text-base">
+                        Page <span className="text-yellow-400">{pagination.currentPage}</span> of <span className="text-blue-400">{pagination.totalPages}</span>
+                      </span>
+                    </div>
+                  </div>
 
+                  {/* Next Button */}
                   <button
                     onClick={() => setCurrentPage(pagination.nextPage || currentPage)}
                     disabled={!pagination.hasNextPage}
-                    className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-yellow-500 to-blue-600 hover:from-yellow-600 hover:to-blue-700 disabled:bg-gray-600 disabled:from-gray-600 disabled:to-gray-600
-                      disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm sm:text-base
-                      font-medium touch-manipulation active:scale-95"
+                    className="group relative w-full sm:w-auto overflow-hidden"
                   >
-                    Next
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur"></div>
+                    <div className="relative glass-card px-6 sm:px-8 py-3 sm:py-4 rounded-xl border border-white/20
+                      disabled:opacity-50 disabled:cursor-not-allowed
+                      group-hover:border-blue-400/50 transition-all duration-300">
+                      <span className="text-white font-medium text-sm sm:text-base bg-gradient-to-r from-white to-blue-200 bg-clip-text group-hover:text-transparent transition-all">
+                        Next
+                      </span>
+                    </div>
                   </button>
                 </div>
               </>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-400 text-sm sm:text-base">No movies found</p>
+              <div className="text-center py-16">
+                <div className="glass-card inline-block px-8 py-6 rounded-2xl border border-white/10">
+                  <p className="text-gray-400 text-base sm:text-lg">No movies found</p>
+                </div>
               </div>
             )}
           </div>
         </section>
       )}
 
-      {/* Features Section */}
-      <section className="py-8 sm:py-12 md:py-16 bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-8 sm:mb-12">
-            Why Choose Our Movie Platform?
-          </h2>
+      {/* Enhanced Features Section */}
+      <section className="py-16 sm:py-20 md:py-24 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-yellow-500 to-amber-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Film className="text-white" size={32} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Title */}
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-block">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-white via-yellow-100 to-blue-100 bg-clip-text text-transparent">
+                  Why Choose Our Movie Platform?
+                </span>
+              </h2>
+              <div className="h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent rounded-full"></div>
+            </div>
+          </div>
+
+          {/* Feature Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {/* Card 1 */}
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-amber-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative glass-card p-8 rounded-2xl border border-white/10 hover:border-yellow-500/30 transition-all duration-500 text-center">
+                <div className="relative inline-block mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl blur-md opacity-50"></div>
+                  <div className="relative bg-gradient-to-br from-yellow-500 to-amber-600 w-20 h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                    <Film className="text-white" size={40} />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-yellow-400 transition-colors">
+                  HD Quality Streaming
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Watch movies in multiple resolutions including 1080p HD for the best viewing experience.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">HD Quality Streaming</h3>
-              <p className="text-gray-400">
-                Watch movies in multiple resolutions including 1080p HD for the best viewing experience.
-              </p>
             </div>
 
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-blue-500 to-blue-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="text-white" size={32} />
+            {/* Card 2 */}
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-700/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative glass-card p-8 rounded-2xl border border-white/10 hover:border-blue-500/30 transition-all duration-500 text-center">
+                <div className="relative inline-block mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl blur-md opacity-50"></div>
+                  <div className="relative bg-gradient-to-br from-blue-500 to-blue-700 w-20 h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                    <TrendingUp className="text-white" size={40} />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
+                  Latest Releases
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Stay up to date with the latest movie releases and blockbuster films.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Latest Releases</h3>
-              <p className="text-gray-400">
-                Stay up to date with the latest movie releases and blockbuster films.
-              </p>
             </div>
 
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-yellow-400 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="text-white" size={32} />
+            {/* Card 3 */}
+            <div className="group relative sm:col-span-2 lg:col-span-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-blue-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative glass-card p-8 rounded-2xl border border-white/10 hover:border-purple-500/30 transition-all duration-500 text-center">
+                <div className="relative inline-block mb-6">
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-blue-600 rounded-2xl blur-md opacity-50"></div>
+                  <div className="relative bg-gradient-to-br from-yellow-400 to-blue-600 w-20 h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                    <Calendar className="text-white" size={40} />
+                  </div>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors">
+                  Extensive Library
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  Access thousands of movie titles from classic films to the latest releases.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Extensive Library</h3>
-              <p className="text-gray-400">
-                Access thousands of movie titles from classic films to the latest releases.
-              </p>
             </div>
           </div>
         </div>
