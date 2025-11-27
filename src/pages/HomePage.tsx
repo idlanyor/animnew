@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { getHomeData, AnimeItem, getSchedule, Schedule } from '@/lib/api';
+import { Schedule } from '@/lib/api';
+import { useHomeData, useSchedule } from '@/hooks/useAnimeQuery';
 import AnimeCard from '@/components/AnimeCard';
 import TodayAnimeCarousel from '@/components/TodayAnimeCarousel';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -17,38 +18,21 @@ const getDayInIndonesian = (): string => {
 };
 
 export default function HomePage() {
-  const [ongoingAnime, setOngoingAnime] = useState<AnimeItem[]>([]);
-  const [popularAnime, setPopularAnime] = useState<AnimeItem[]>([]);
-  const [todayAnime, setTodayAnime] = useState<Schedule | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Fetch data with React Query hooks - automatic caching and deduplication
+  const { data: homeData, isLoading: homeLoading, isError: homeError } = useHomeData();
+  const { data: scheduleData, isLoading: scheduleLoading } = useSchedule();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  // Get today's schedule using memoization
+  const todayAnime = useMemo(() => {
+    if (!scheduleData) return null;
+    const currentDay = getDayInIndonesian();
+    return scheduleData.find(day => day.day === currentDay) || null;
+  }, [scheduleData]);
 
-        // Fetch schedule and filter by today
-        const currentDay = getDayInIndonesian();
-        const schedule = await getSchedule();
-        const todaySchedule = schedule.find(day => day.day === currentDay);
-        setTodayAnime(todaySchedule || null);
-
-        // Fetch home data (ongoing and complete anime)
-        const homeData = await getHomeData();
-        setOngoingAnime(homeData.ongoing);
-        setPopularAnime(homeData.complete);
-
-      } catch (err) {
-        setError('Failed to load anime data');
-        console.error('Error fetching data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const loading = homeLoading || scheduleLoading;
+  const error = homeError ? 'Failed to load anime data' : null;
+  const ongoingAnime = homeData?.ongoing || [];
+  const popularAnime = homeData?.complete || [];
 
   // Generate SEO data for home page
   const seoData = generatePageSEOData({

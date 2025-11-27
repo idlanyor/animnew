@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { getMovieList, searchMovies, MovieItem, MoviePagination } from '@/lib/api';
+import { useState } from 'react';
+import { useMovieList, useSearchMovies } from '@/hooks/useAnimeQuery';
 import MovieCard from '@/components/MovieCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import SEOHead from '@/components/SEOHead';
@@ -9,67 +9,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilm, faArrowTrendUp, faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 export default function MoviePage() {
-  const [movies, setMovies] = useState<MovieItem[]>([]);
-  const [searchResults, setSearchResults] = useState<MovieItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pagination, setPagination] = useState<MoviePagination>({
+
+  // Use React Query hooks - automatic caching and request deduplication
+  const { data: movieData, isLoading, isError } = useMovieList(currentPage);
+  const { data: searchResults = [], isLoading: searchLoading } = useSearchMovies(searchQuery, {
+    enabled: searchQuery.length >= 2,
+  });
+
+  const movies = movieData?.movies || [];
+  const pagination = movieData?.pagination || {
     currentPage: 1,
     hasPrevPage: false,
     prevPage: null,
     hasNextPage: false,
     nextPage: null,
     totalPages: 1
-  });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch movies from Sanka Vollerei API with pagination
-        const result = await getMovieList({ page: currentPage });
-        setMovies(result.movies);
-        setPagination(result.pagination);
-
-      } catch (err) {
-        setError('Failed to load movie data');
-        console.error('Error fetching data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [currentPage]);
-
-  // Live search effect - using Sanka Vollerei API
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    const searchMoviesAPI = async () => {
-      try {
-        setSearchLoading(true);
-        const results = await searchMovies(searchQuery);
-        setSearchResults(results);
-      } catch (err) {
-        console.error('Error searching movies:', err);
-        setSearchResults([]);
-      } finally {
-        setSearchLoading(false);
-      }
-    };
-
-    // Debounce search to avoid too many API calls
-    const timeoutId = setTimeout(searchMoviesAPI, 500);
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  };
 
   // Generate SEO data for movie page
   const seoData = generatePageSEOData({
@@ -79,7 +36,7 @@ export default function MoviePage() {
     url: '/movie',
   });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="lg" text="Loading movies..." />
@@ -87,11 +44,11 @@ export default function MoviePage() {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-500 text-xl mb-4">{error}</p>
+          <p className="text-red-500 text-xl mb-4">Failed to load movie data</p>
           <button
             onClick={() => window.location.reload()}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"

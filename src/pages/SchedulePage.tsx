@@ -52,7 +52,7 @@ export default function SchedulePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="mx-auto px-4 py-8">
       <div className="flex items-center mb-8 space-x-2">
         <FontAwesomeIcon icon={faCalendar} className="h-8 w-8 text-blue-500" />
         <h1 className="text-3xl font-bold text-white">Anime Schedule</h1>
@@ -66,7 +66,7 @@ export default function SchedulePage() {
             </div>
             <div className="p-6">
               {day.anime_list.length > 0 ? (
-                <div className="grid gap-4">
+                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {day.anime_list.map((anime) => (
                     <Link
                       key={anime.slug}

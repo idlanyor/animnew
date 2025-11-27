@@ -128,7 +128,7 @@ export default function Footer() {
               <div className="flex items-center gap-2">
                 <span className="text-gray-400 text-sm">Powered by</span>
                 <div className="bg-cyan-500/20 border border-cyan-400/30 px-2.5 py-0.5 rounded">
-                  <span className="text-cyan-400 text-sm font-semibold">Ryzumi API</span>
+                  <span className="text-cyan-400 text-sm font-semibold">Antidonasi Team</span>
                 </div>
               </div>
             </div>

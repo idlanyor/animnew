@@ -1,42 +1,26 @@
-import { useState, useEffect } from 'react';
-import { getCompleteAnime, AnimeItem, OngoingPagination } from '@/lib/api';
+import { useState } from 'react';
+import { useCompleteAnime } from '@/hooks/useAnimeQuery';
 import AnimeCard from '@/components/AnimeCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default function CompletePage() {
-  const [animeList, setAnimeList] = useState<AnimeItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<OngoingPagination | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchAnime = async (page: number) => {
-    try {
-      setLoading(true);
-      const { anime, pagination: paginationData } = await getCompleteAnime(page);
-      setAnimeList(anime);
-      setPagination(paginationData);
-    } catch (err) {
-      setError('Failed to load complete anime');
-      console.error('Error fetching complete anime:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, isLoading, isError } = useCompleteAnime(currentPage);
 
-  useEffect(() => {
-    fetchAnime(1);
-  }, []);
+  const animeList = data?.anime || [];
+  const pagination = data?.pagination || null;
 
   const goToPage = (page: number) => {
-    if (!loading && page > 0) {
-      fetchAnime(page);
+    if (page > 0) {
+      setCurrentPage(page);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  if (loading && !pagination) {
+  if (isLoading && !pagination) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <LoadingSpinner size="lg" text="Loading complete anime..." />
@@ -66,14 +50,11 @@ export default function CompletePage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {error ? (
+        {isError ? (
           <div className="text-center py-12">
-            <p className="text-red-500 text-xl mb-4">{error}</p>
+            <p className="text-red-500 text-xl mb-4">Failed to load complete anime</p>
             <button
-              onClick={() => {
-                setError(null);
-                fetchAnime(1);
-              }}
+              onClick={() => window.location.reload()}
               className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-all border border-emerald-400/30 shadow-lg shadow-emerald-500/20"
             >
               Try Again
@@ -114,7 +95,7 @@ export default function CompletePage() {
                 {/* Previous Button */}
                 <button
                   onClick={() => pagination.previous_page && goToPage(pagination.previous_page)}
-                  disabled={!pagination.has_previous_page || loading}
+                  disabled={!pagination.has_previous_page || isLoading}
                   className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-emerald-400/30 shadow-lg shadow-emerald-500/20"
                 >
                   <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
@@ -132,7 +113,7 @@ export default function CompletePage() {
                 {/* Next Button */}
                 <button
                   onClick={() => pagination.next_page && goToPage(pagination.next_page)}
-                  disabled={!pagination.has_next_page || loading}
+                  disabled={!pagination.has_next_page || isLoading}
                   className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-emerald-400/30 shadow-lg shadow-emerald-500/20"
                 >
                   Next

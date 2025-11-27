@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { MovieItem } from '@/lib/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,7 +10,7 @@ interface MovieCardProps {
   movie: MovieItem;
 }
 
-export default function MovieCard({ movie }: MovieCardProps) {
+function MovieCard({ movie }: MovieCardProps) {
   const { isBookmarked, toggleBookmark } = useBookmarks();
   const bookmarked = isBookmarked(movie.slug);
 
@@ -20,8 +21,8 @@ export default function MovieCard({ movie }: MovieCardProps) {
   };
   return (
     <Link to={`/movie/${movie.slug}`} className="group block">
-      <div className="relative overflow-hidden rounded-lg transition-transform duration-200 group-hover:scale-[1.02]">
-        <div className="relative bg-gray-900 overflow-hidden rounded-lg border border-gray-800 group-hover:border-gray-700 transition-colors duration-200">
+      <div className="relative overflow-hidden transition-transform duration-200 group-hover:scale-[1.02]">
+        <div className="relative bg-gray-900 overflow-hidden border border-gray-800 group-hover:border-gray-700 transition-colors duration-200">
           <div className="aspect-[2/3] sm:aspect-[3/4] relative overflow-hidden">
             <img
               src={movie.poster && movie.poster.trim() !== ''
@@ -71,7 +72,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
             {/* Bookmark button */}
             <button
               onClick={handleBookmarkClick}
-              className="absolute top-2 left-2 z-20 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
+              className="absolute bottom-2 right-2 z-20 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
               aria-label={bookmarked ? 'Remove from favorites' : 'Add to favorites'}
             >
               <FontAwesomeIcon
@@ -110,3 +111,9 @@ export default function MovieCard({ movie }: MovieCardProps) {
     </Link>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export default memo(MovieCard, (prevProps, nextProps) => {
+  // Only re-render if movie slug changes
+  return prevProps.movie.slug === nextProps.movie.slug;
+});

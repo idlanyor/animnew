@@ -1,42 +1,27 @@
-import { useState, useEffect } from 'react';
-import { getOngoingAnime, AnimeItem, OngoingPagination } from '@/lib/api';
+import { useState } from 'react';
+import { useOngoingAnime } from '@/hooks/useAnimeQuery';
 import AnimeCard from '@/components/AnimeCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowTrendUp, faChevronRight, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default function OngoingPage() {
-  const [animeList, setAnimeList] = useState<AnimeItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<OngoingPagination | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchAnime = async (page: number) => {
-    try {
-      setLoading(true);
-      const { anime, pagination: paginationData } = await getOngoingAnime(page);
-      setAnimeList(anime);
-      setPagination(paginationData);
-    } catch (err) {
-      setError('Failed to load ongoing anime');
-      console.error('Error fetching ongoing anime:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // React Query handles caching automatically - each page is cached separately
+  const { data, isLoading, isError, error } = useOngoingAnime(currentPage);
 
-  useEffect(() => {
-    fetchAnime(1);
-  }, []);
+  const animeList = data?.anime || [];
+  const pagination = data?.pagination || null;
 
   const goToPage = (page: number) => {
-    if (!loading && page > 0) {
-      fetchAnime(page);
+    if (page > 0) {
+      setCurrentPage(page);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  if (loading && !pagination) {
+  if (isLoading && !pagination) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <LoadingSpinner size="lg" text="Loading ongoing anime..." />
@@ -66,14 +51,11 @@ export default function OngoingPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {error ? (
+        {isError ? (
           <div className="text-center py-12">
-            <p className="text-red-500 text-xl mb-4">{error}</p>
+            <p className="text-red-500 text-xl mb-4">Failed to load ongoing anime</p>
             <button
-              onClick={() => {
-                setError(null);
-                fetchAnime(1);
-              }}
+              onClick={() => window.location.reload()}
               className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all border border-cyan-400/30 shadow-lg shadow-cyan-500/20"
             >
               Try Again
@@ -103,9 +85,13 @@ export default function OngoingPage() {
 
             {/* Anime Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-12">
-              {animeList.map((anime) => (
-                <AnimeCard key={anime.slug} anime={anime} />
-              ))}
+              {animeList.map((anime) => {
+                const restructuredAnime = {
+                  ...anime,
+                  current_episode: anime.current_episode?.replace('Total', '').trim()
+                }
+                return <AnimeCard key={anime.slug} anime={restructuredAnime} />
+              })}
             </div>
 
             {/* Pagination Controls */}
@@ -114,7 +100,7 @@ export default function OngoingPage() {
                 {/* Previous Button */}
                 <button
                   onClick={() => pagination.previous_page && goToPage(pagination.previous_page)}
-                  disabled={!pagination.has_previous_page || loading}
+                  disabled={!pagination.has_previous_page || isLoading}
                   className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-cyan-400/30 shadow-lg shadow-cyan-500/20"
                 >
                   <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
@@ -132,7 +118,7 @@ export default function OngoingPage() {
                 {/* Next Button */}
                 <button
                   onClick={() => pagination.next_page && goToPage(pagination.next_page)}
-                  disabled={!pagination.has_next_page || loading}
+                  disabled={!pagination.has_next_page || isLoading}
                   className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-cyan-400/30 shadow-lg shadow-cyan-500/20"
                 >
                   Next

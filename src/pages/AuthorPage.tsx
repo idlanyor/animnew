@@ -35,17 +35,17 @@ export default function AuthorPage() {
       github: 'https://github.com/idlanyor',
       description: 'Developer utama KanataAnimeV2. Bertanggung jawab untuk pengembangan frontend dan UI/UX aplikasi.',
       avatar: 'https://github.com/idlanyor.png',
-      website: 'https://puki.bukankah-ini.my.id',
+      website: 'https://idlanyor.web.id',
       skills: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Bun', 'Elysia', 'etc']
     },
     {
       name: 'Fatih Firdaus',
       role: 'Penyedia API/Backend',
       github: 'https://github.com/ShirokamiRyzen',
-      description: 'Developer backend dan penyedia API Ryzumi untuk KanataAnimeV2. Bertanggung jawab untuk infrastruktur dan data anime.',
+      description: 'Developer backend dan penyedia API Ryzumi untuk KanataAnimeV2.',
       avatar: 'https://github.com/ShirokamiRyzen.png',
       website: 'https://ryzumi.vip/',
-      skills: ['Node.js', 'Express', 'REST API', 'Firebase', 'etc']
+      skills: ['Node.js', 'Express', 'REST API', 'Firebase','React','DevOps', 'etc']
     },
     {
       name: 'Sandika',
@@ -57,13 +57,13 @@ export default function AuthorPage() {
       skills: ['Node.js', 'Express', 'Scraping', 'etc']
     },
     {
-      name: 'Antidonasi Team',
-      role: 'Penonton setia & Supporter',
+      name: 'Antidonasi Member',
+      role: 'Supporter Project',
       github: 'https://github.com/ShirokamiRyzen',
       description: 'Pendukung setia Project KanataAnimeV2',
       avatar: 'https://github.com/AntiDonasi.png',
       website: 'https://antidonasi.web.id/',
-      skills: ['Rebahan', 'Tidur', 'Makan', 'Minum', 'Nonton Anime', 'Ngoding', 'etc']
+      skills: ['Rebahan', 'Tidur', 'Nonton Anime','etc']
     }
   ];
 
@@ -157,7 +157,7 @@ export default function AuthorPage() {
           KanataAnimeV2 adalah platform streaming anime yang dikembangkan dengan ❤️ oleh Roy Antidonasi dkk.
         </p>
         <p className="mt-2 flex items-center justify-center gap-2">
-          Powered by Ryzumi API & Sankanime
+          Powered by <a href="https://antidonasi.web.id" className='text-blue-500 font-bold' target="_blank" rel="noopener noreferrer">Antidonasi Team</a>
         </p>
       </div>
     </div>
