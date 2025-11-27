@@ -1,16 +1,15 @@
-'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
+import { Link, useParams } from 'react-router-dom';
 import { getEpisode, getMirrorEpisode, getNonce, getIframe, Episode } from '@/lib/api';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Play, Download, Monitor, Smartphone, Tv, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faDownload, faDesktop, faMobile, faTv, faArrowLeft, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function EpisodePage() {
   const params = useParams();
   const slug = params.slug as string;
-  
+
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +17,7 @@ export default function EpisodePage() {
   const [selectedServer, setSelectedServer] = useState(0);
   const [videoUrl, setVideoUrl] = useState<string>('');
   const [loadingVideo, setLoadingVideo] = useState(false);
-  
+
   // Helper functions
   const getEpisodeNumber = (episodeSlug: string): number => {
     const match = episodeSlug.match(/(?:episode-|ep-)([0-9]+)/i);
@@ -27,16 +26,16 @@ export default function EpisodePage() {
     }
     return 0;
   };
-  
+
   const currentEpisodeNumber = getEpisodeNumber(slug);
-  
+
   const getPreviousEpisodeSlug = (): string | null => {
     if (currentEpisodeNumber <= 1) return null;
     return slug.replace(/(?:episode-|ep-)([0-9]+)/i, (match, number) => {
       return match.replace(number, (currentEpisodeNumber - 1).toString());
     });
   };
-  
+
   const getNextEpisodeSlug = (): string | null => {
     if (currentEpisodeNumber < 1) return null;
     return slug.replace(/(?:episode-|ep-)([0-9]+)/i, (match, number) => {
@@ -99,17 +98,17 @@ export default function EpisodePage() {
       try {
         setLoading(true);
         let data: Episode;
-        
+
         try {
           data = await getEpisode(slug);
         } catch (err) {
           console.error('Error fetching episode:', err);
           data = await getMirrorEpisode(slug);
         }
-        
+
         setEpisode(data);
       } catch (err) {
-        setError('Failed to load episode'+err);
+        setError('Failed to load episode' + err);
         console.error('Error fetching episode:', err);
       } finally {
         setLoading(false);
@@ -148,8 +147,8 @@ export default function EpisodePage() {
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
           <p className="text-red-500 text-xl mb-4">{error || 'Episode not found'}</p>
-          <Link 
-            href="/" 
+          <Link
+            to="/"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
           >
             Back to Home
@@ -169,15 +168,15 @@ export default function EpisodePage() {
         {/* Header */}
         <div className="mb-8">
           <div className="mb-4">
-            <Link 
-              href="/"
+            <Link
+              to="/"
               className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
             >
-              <ArrowLeft size={20} />
+              <FontAwesomeIcon icon={faArrowLeft} className="text-[20px]" />
               Back to Home
             </Link>
           </div>
-          
+
           <h1 className="text-3xl md:text-4xl font-bold text-white">
             {episode.judul}
           </h1>
@@ -201,11 +200,10 @@ export default function EpisodePage() {
                             setSelectedQuality(quality as '360p' | '480p' | '720p');
                             setSelectedServer(0);
                           }}
-                          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                            selectedQuality === quality
+                          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${selectedQuality === quality
                               ? 'bg-blue-600 text-white'
                               : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                          }`}
+                            }`}
                         >
                           {quality}
                         </button>
@@ -238,7 +236,7 @@ export default function EpisodePage() {
                 ) : mirrors.length > 0 && mirrors[selectedServer] ? (
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="text-center">
-                      <Play className="text-blue-500 mx-auto mb-4" size={64} />
+                      <FontAwesomeIcon icon={faPlay} className="text-blue-500 mx-auto mb-4 text-[64px]" />
                       <p className="text-white mb-4">
                         Server: {mirrors[selectedServer].nama}
                       </p>
@@ -256,7 +254,7 @@ export default function EpisodePage() {
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="text-center">
-                      <Monitor className="text-gray-500 mx-auto mb-4" size={64} />
+                      <FontAwesomeIcon icon={faDesktop} className="text-gray-500 mx-auto mb-4 text-[64px]" />
                       <p className="text-gray-400">No video source available</p>
                     </div>
                   </div>
@@ -268,15 +266,15 @@ export default function EpisodePage() {
                 <div className="bg-gray-800 p-4 border-t border-gray-700">
                   <div className="flex flex-wrap justify-between items-center mb-3">
                     <h3 className="text-white font-medium">Available Servers ({selectedQuality})</h3>
-                    
+
                     {/* Episode Navigation (Next to Servers) */}
                     <div className="flex items-center gap-2">
                       {previousEpisodeSlug ? (
                         <Link
-                          href={`/episode/${previousEpisodeSlug}`}
+                          to={`/episode/${previousEpisodeSlug}`}
                           className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
                         >
-                          <ChevronLeft size={18} />
+                          <FontAwesomeIcon icon={faChevronLeft} className="text-[18px]" />
                           Previous
                         </Link>
                       ) : (
@@ -284,18 +282,18 @@ export default function EpisodePage() {
                           disabled
                           className="inline-flex items-center gap-1 bg-gray-700 text-gray-400 px-3 py-2 rounded-lg cursor-not-allowed"
                         >
-                          <ChevronLeft size={18} />
+                          <FontAwesomeIcon icon={faChevronLeft} className="text-[18px]" />
                           Previous
                         </button>
                       )}
-                      
+
                       {nextEpisodeSlug ? (
                         <Link
-                          href={`/episode/${nextEpisodeSlug}`}
+                          to={`/episode/${nextEpisodeSlug}`}
                           className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
                         >
                           Next
-                          <ChevronRight size={18} />
+                          <FontAwesomeIcon icon={faChevronRight} className="text-[18px]" />
                         </Link>
                       ) : (
                         <button
@@ -303,28 +301,27 @@ export default function EpisodePage() {
                           className="inline-flex items-center gap-1 bg-gray-700 text-gray-400 px-3 py-2 rounded-lg cursor-not-allowed"
                         >
                           Next
-                          <ChevronRight size={18} />
+                          <FontAwesomeIcon icon={faChevronRight} className="text-[18px]" />
                         </button>
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-wrap gap-2">
                     {mirrors.map((mirror, index) => (
                       <button
                         key={index}
                         onClick={() => setSelectedServer(index)}
-                        className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-                          selectedServer === index
+                        className={`px-4 py-2 rounded text-sm font-medium transition-colors ${selectedServer === index
                             ? 'bg-blue-600 text-white'
                             : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
+                          }`}
                       >
                         {mirror.nama}
                       </button>
                     ))}
                   </div>
-                  
+
                   {/* Status indicator */}
                   <div className="mt-3 text-sm text-gray-400">
                     Current: {mirrors[selectedServer]?.nama} - {selectedQuality}
@@ -339,30 +336,30 @@ export default function EpisodePage() {
               <h2 className="text-2xl font-bold text-white mb-4">Episode Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <Tv className="text-blue-500 mx-auto mb-2" size={32} />
+                  <FontAwesomeIcon icon={faTv} className="text-blue-500 mx-auto mb-2 text-[32px]" />
                   <h3 className="text-white font-medium">HD Quality</h3>
                   <p className="text-gray-400 text-sm">Multiple resolutions available</p>
                 </div>
                 <div className="text-center">
-                  <Smartphone className="text-green-500 mx-auto mb-2" size={32} />
+                  <FontAwesomeIcon icon={faMobile} className="text-green-500 mx-auto mb-2 text-[32px]" />
                   <h3 className="text-white font-medium">Mobile Friendly</h3>
                   <p className="text-gray-400 text-sm">Optimized for all devices</p>
                 </div>
                 <div className="text-center">
-                  <Download className="text-purple-500 mx-auto mb-2" size={32} />
+                  <FontAwesomeIcon icon={faDownload} className="text-purple-500 mx-auto mb-2 text-[32px]" />
                   <h3 className="text-white font-medium">Download Available</h3>
                   <p className="text-gray-400 text-sm">Multiple download options</p>
                 </div>
               </div>
-              
+
               {/* Episode Navigation (Bottom) */}
               <div className="mt-8 flex justify-center gap-4">
                 {previousEpisodeSlug ? (
                   <Link
-                    href={`/episode/${previousEpisodeSlug}`}
+                    to={`/episode/${previousEpisodeSlug}`}
                     className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                   >
-                    <ChevronLeft size={20} />
+                    <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
                     Previous Episode
                   </Link>
                 ) : (
@@ -370,18 +367,18 @@ export default function EpisodePage() {
                     disabled
                     className="inline-flex items-center gap-2 bg-gray-700 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed"
                   >
-                    <ChevronLeft size={20} />
+                    <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
                     Previous Episode
                   </button>
                 )}
-                
+
                 {nextEpisodeSlug ? (
                   <Link
-                    href={`/episode/${nextEpisodeSlug}`}
+                    to={`/episode/${nextEpisodeSlug}`}
                     className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                   >
                     Next Episode
-                    <ChevronRight size={20} />
+                    <FontAwesomeIcon icon={faChevronRight} className="text-[20px]" />
                   </Link>
                 ) : (
                   <button
@@ -389,7 +386,7 @@ export default function EpisodePage() {
                     className="inline-flex items-center gap-2 bg-gray-700 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed"
                   >
                     Next Episode
-                    <ChevronRight size={20} />
+                    <FontAwesomeIcon icon={faChevronRight} className="text-[20px]" />
                   </button>
                 )}
               </div>
@@ -401,10 +398,10 @@ export default function EpisodePage() {
             {/* Download Section */}
             <div className="bg-gray-900 rounded-lg p-6 mb-6">
               <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Download className="text-green-500" />
+                <FontAwesomeIcon icon={faDownload} className="text-green-500" />
                 Download Links
               </h3>
-              
+
               <div className="space-y-4">
                 {downloads.length > 0 ? (
                   downloads.map((download, index) => (
@@ -443,7 +440,7 @@ export default function EpisodePage() {
                   <span className="text-yellow-500 font-semibold">HD</span>
                 </div>
               </div>
-              
+
               <div className="mt-4 p-3 bg-blue-900/30 rounded-lg border border-blue-700">
                 <p className="text-blue-300 text-sm">
                   💡 Tip: Use 720p for the best viewing experience on larger screens.

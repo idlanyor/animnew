@@ -1,12 +1,13 @@
-'use client';
-
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getHomeData, AnimeItem, getSchedule, Schedule } from '@/lib/api';
 import AnimeCard from '@/components/AnimeCard';
 import TodayAnimeCarousel from '@/components/TodayAnimeCarousel';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Play, TrendingUp, Clock } from 'lucide-react';
-import Link from 'next/link';
+import SEOHead from '@/components/SEOHead';
+import { generatePageSEOData } from '@/lib/seo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faArrowTrendUp, faClock } from '@fortawesome/free-solid-svg-icons';
 
 // Helper function to get current day in Indonesian
 const getDayInIndonesian = (): string => {
@@ -49,6 +50,14 @@ export default function HomePage() {
     fetchData();
   }, []);
 
+  // Generate SEO data for home page
+  const seoData = generatePageSEOData({
+    title: 'KanataAnime - Nonton Anime Sub Indo HD Gratis Tanpa Iklan',
+    description: 'Nonton anime sub indo gratis di KanataAnime. Platform streaming anime terbaik dengan koleksi lengkap anime ongoing, complete dan movie. Streaming anime subtitle Indonesia dengan kualitas HD 720p tanpa iklan.',
+    keywords: 'kanatanime, kanata anime, antidonasi anime, nonton anime, nonton anime sub indo, streaming anime, streaming anime sub indo, anime tanpa iklan, anime gratis, anime sub indo, anime subtitle indonesia, anime ongoing, anime complete, anime movie, anime terbaru, anime terlengkap',
+    url: '/',
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 via-gray-900 to-black">
@@ -83,7 +92,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black">
+    <>
+      <SEOHead {...seoData} />
+      <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black">
       {/* Today's Anime Carousel */}
       {todayAnime && todayAnime.anime_list.length > 0 && (
         <TodayAnimeCarousel
@@ -101,7 +112,7 @@ export default function HomePage() {
               <div className="relative glass-card px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
                   <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/20 to-cyan-500/20">
-                    <TrendingUp className="text-yellow-400 h-5 w-5 sm:h-6 sm:w-6" />
+                    <FontAwesomeIcon icon={faArrowTrendUp} className="text-yellow-400 h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <span className="bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent">
                     Anime Ongoing Terbaru
@@ -110,7 +121,7 @@ export default function HomePage() {
               </div>
             </div>
             <Link
-              href="/ongoing"
+              to="/ongoing"
               className="group relative"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur rounded-lg"></div>
@@ -147,7 +158,7 @@ export default function HomePage() {
               <div className="relative glass-card px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10">
                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
                   <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20">
-                    <Play className="text-blue-400 h-5 w-5 sm:h-6 sm:w-6" />
+                    <FontAwesomeIcon icon={faPlay} className="text-blue-400 h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
                     Anime Complete Sub Indo
@@ -156,7 +167,7 @@ export default function HomePage() {
               </div>
             </div>
             <Link
-              href="/complete"
+              to="/complete"
               className="group relative"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur rounded-lg"></div>
@@ -214,7 +225,7 @@ export default function HomePage() {
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl blur-md opacity-50"></div>
                   <div className="relative bg-gradient-to-br from-yellow-500 to-amber-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <Play className="text-white" size={32} />
+                    <FontAwesomeIcon icon={faPlay} className="text-white text-[32px]" />
                   </div>
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-yellow-400 transition-colors">
@@ -233,7 +244,7 @@ export default function HomePage() {
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl blur-md opacity-50"></div>
                   <div className="relative bg-gradient-to-br from-blue-500 to-cyan-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <TrendingUp className="text-white" size={32} />
+                    <FontAwesomeIcon icon={faArrowTrendUp} className="text-white text-[32px]" />
                   </div>
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
@@ -252,7 +263,7 @@ export default function HomePage() {
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-2xl blur-md opacity-50"></div>
                   <div className="relative bg-gradient-to-br from-cyan-500 to-purple-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <Clock className="text-white" size={32} />
+                    <FontAwesomeIcon icon={faClock} className="text-white text-[32px]" />
                   </div>
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
@@ -266,7 +277,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
 

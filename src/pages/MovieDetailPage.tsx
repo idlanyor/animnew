@@ -1,17 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
+import { Link,useParams } from 'react-router-dom'
 import { getMovieDetail, MovieDetail } from '@/lib/api';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Play, Calendar, Clock, Star, Building, Tag } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { generateMovieSEOData } from '@/lib/seo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faCalendar, faClock, faStar, faBuilding, faTag } from '@fortawesome/free-solid-svg-icons';
 
 export default function MovieDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  
+
   const [movie, setMovie] = useState<MovieDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +36,17 @@ export default function MovieDetailPage() {
     }
   }, [slug]);
 
+  // Generate SEO data when movie data is available
+  const seoData = movie ? generateMovieSEOData({
+    title: movie.data.title,
+    synopsis: movie.data.synopsis.paragraphs.join(' '),
+    image: movie.data.poster,
+    slug: slug, // Use slug from URL params
+    releaseYear: movie.data.aired,
+    score: movie.data.score.value,
+    genres: movie.data.genreList.map(g => g.title),
+  }) : null;
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 via-gray-900 to-black">
@@ -53,7 +65,7 @@ export default function MovieDetailPage() {
             <p className="text-red-500 text-xl mb-4">{error || 'Movie not found'}</p>
           </div>
           <Link
-            href="/movie"
+            to="/movie"
             className="inline-block group relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur"></div>
@@ -69,18 +81,17 @@ export default function MovieDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black">
+    <>
+      {seoData && <SEOHead {...seoData} />}
+      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black">
       {/* Enhanced Hero Section with Glassmorphism */}
       <div className="relative overflow-hidden">
         {/* Background Image with Blur */}
         <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]">
-          <Image
+          <img
             src={movie.data.poster || `https://placehold.co/800x600/1a1a1a/ffffff?text=${encodeURIComponent(movie.data.title)}`}
             alt={movie.data.title}
-            fill
-            unoptimized
-            className="object-cover object-center"
-            priority
+            className="w-full h-full object-cover object-center"
           />
           {/* Multi-layer overlay for better glass effect */}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/30"></div>
@@ -113,7 +124,7 @@ export default function MovieDetailPage() {
                 <div className="group relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-600 blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
                   <div className="relative glass-badge backdrop-blur-md bg-gradient-to-r from-yellow-500/90 to-amber-600/90 border border-yellow-400/30 px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
-                    <Star size={18} fill="currentColor" className="text-white" />
+                    <FontAwesomeIcon icon={faStar} className="text-white text-[18px]" />
                     <span className="font-bold text-white text-sm">{movie.data.score.value}</span>
                     <span className="text-xs text-yellow-100 hidden sm:inline">({movie.data.score.users} users)</span>
                   </div>
@@ -176,7 +187,7 @@ export default function MovieDetailPage() {
                     <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-yellow-500/30 transition-all duration-300 group/item">
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/20 to-amber-600/20 group-hover/item:from-yellow-500/30 group-hover/item:to-amber-600/30 transition-all">
-                          <Clock className="text-yellow-400" size={20} />
+                          <FontAwesomeIcon icon={faClock} className="text-yellow-400 text-[20px]" />
                         </div>
                         <div>
                           <span className="text-gray-400 text-xs font-medium">Duration</span>
@@ -189,7 +200,7 @@ export default function MovieDetailPage() {
                     <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-blue-500/30 transition-all duration-300 group/item">
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-600/20 group-hover/item:from-blue-500/30 group-hover/item:to-cyan-600/30 transition-all">
-                          <Calendar className="text-blue-400" size={20} />
+                          <FontAwesomeIcon icon={faCalendar} className="text-blue-400 text-[20px]" />
                         </div>
                         <div>
                           <span className="text-gray-400 text-xs font-medium">Aired</span>
@@ -202,7 +213,7 @@ export default function MovieDetailPage() {
                     <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300 group/item">
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 group-hover/item:from-cyan-500/30 group-hover/item:to-blue-600/30 transition-all">
-                          <Building className="text-cyan-400" size={20} />
+                          <FontAwesomeIcon icon={faBuilding} className="text-cyan-400 text-[20px]" />
                         </div>
                         <div>
                           <span className="text-gray-400 text-xs font-medium">Studios</span>
@@ -215,7 +226,7 @@ export default function MovieDetailPage() {
                     <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-purple-500/30 transition-all duration-300 group/item">
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-600/20 group-hover/item:from-purple-500/30 group-hover/item:to-pink-600/30 transition-all">
-                          <Tag className="text-purple-400" size={20} />
+                          <FontAwesomeIcon icon={faTag} className="text-purple-400 text-[20px]" />
                         </div>
                         <div>
                           <span className="text-gray-400 text-xs font-medium">Source</span>
@@ -256,7 +267,7 @@ export default function MovieDetailPage() {
                   <div className="mb-6">
                     <h3 className="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
                       <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20">
-                        <Play className="text-blue-400" size={24} />
+                        <FontAwesomeIcon icon={faPlay} className="text-blue-400 text-[24px]" />
                       </div>
                       <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
                         Episodes
@@ -271,13 +282,13 @@ export default function MovieDetailPage() {
                     {movie.data.episodeList.map((episode) => (
                       <Link
                         key={episode.episodeId}
-                        href={`/movie/watch/${episode.episodeId}`}
+                        to={`/movie/watch/${episode.episodeId}`}
                         className="group/ep relative overflow-hidden"
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-500/30 opacity-0 group-hover/ep:opacity-100 transition-opacity duration-300 blur"></div>
                         <div className="relative glass-card p-3 rounded-xl border border-white/10 group-hover/ep:border-blue-400/50 transition-all duration-300 text-center">
                           <div className="flex items-center justify-center gap-2">
-                            <Play className="text-gray-400 group-hover/ep:text-blue-400 transition-colors" size={16} />
+                            <FontAwesomeIcon icon={faPlay} className="text-gray-400 group-hover/ep:text-blue-400 transition-colors text-[16px]" />
                             <span className="text-white font-medium text-sm group-hover/ep:text-blue-300">EP {episode.title}</span>
                           </div>
                         </div>
@@ -298,12 +309,10 @@ export default function MovieDetailPage() {
                 {/* Enhanced Poster */}
                 <div className="aspect-[3/4] relative rounded-xl overflow-hidden mb-6 group/poster">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
-                  <Image
+                  <img
                     src={movie.data.poster || `https://placehold.co/300x400/1a1a1a/ffffff?text=${encodeURIComponent(movie.data.title)}`}
                     alt={movie.data.title}
-                    fill
-                    unoptimized
-                    className="object-cover group-hover/poster:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover/poster:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 border-2 border-white/10 rounded-xl group-hover/poster:border-white/20 transition-colors"></div>
                 </div>
@@ -317,14 +326,14 @@ export default function MovieDetailPage() {
                     </h3>
 
                     <Link
-                      href={`/movie/watch/${movie.data.episodeList[0].episodeId}`}
+                      to={`/movie/watch/${movie.data.episodeList[0].episodeId}`}
                       className="block group/watch relative overflow-hidden"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 via-blue-500 to-purple-600 opacity-100 group-hover/watch:opacity-100 transition-opacity duration-300 animate-gradient"></div>
                       <div className="relative backdrop-blur-sm bg-gradient-to-r from-yellow-500/90 via-blue-500/90 to-purple-600/90 border border-yellow-400/30 text-white text-center py-4 rounded-xl transition-all duration-300 font-bold text-lg shadow-2xl group-hover/watch:shadow-yellow-500/50 group-hover/watch:scale-[1.02]">
                         <div className="flex items-center justify-center gap-3">
                           <div className="p-2 bg-white/20 rounded-full group-hover/watch:bg-white/30 transition-colors">
-                            <Play size={20} fill="currentColor" />
+                            <FontAwesomeIcon icon={faPlay} className="text-[20px]" />
                           </div>
                           <span>Watch Now</span>
                         </div>
@@ -365,7 +374,7 @@ export default function MovieDetailPage() {
                     <div className="glass-card p-3 rounded-xl border border-white/5 flex justify-between items-center group/stat hover:border-yellow-500/30 transition-all">
                       <span className="text-gray-400 text-sm font-medium">Score</span>
                       <span className="text-yellow-400 font-bold flex items-center gap-1.5 text-lg">
-                        <Star size={16} fill="currentColor" />
+                        <FontAwesomeIcon icon={faStar} className="text-[16px]" />
                         {movie.data.score.value}
                       </span>
                     </div>
@@ -397,6 +406,7 @@ export default function MovieDetailPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

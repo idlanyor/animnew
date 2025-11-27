@@ -1,10 +1,10 @@
-'use client';
 
 import { useState, useEffect } from 'react';
 import { getGenres, getAnimeByGenre, Genre, AnimeItem, OngoingPagination } from '@/lib/api';
 import AnimeCard from '@/components/AnimeCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Tag, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTag, faFilter, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function GenresPage() {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -69,7 +69,7 @@ export default function GenresPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Tag className="text-yellow-300" size={48} />
+              <FontAwesomeIcon icon={faTag} className="text-yellow-300 text-[48px]" />
               <h1 className="text-4xl md:text-5xl font-bold text-white">
                 Anime Genres
               </h1>
@@ -109,7 +109,7 @@ export default function GenresPage() {
             {/* Genre Buttons */}
             <div className="bg-gray-900 rounded-lg p-6">
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <Filter className="text-yellow-400" />
+                <FontAwesomeIcon icon={faFilter} className="text-yellow-400" />
                 Select a Genre
               </h2>
               <div className="flex flex-wrap gap-3">
@@ -155,7 +155,7 @@ export default function GenresPage() {
                           disabled={!pagination.has_previous_page || loadingAnime}
                           className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-yellow-400/30 shadow-lg shadow-yellow-500/20"
                         >
-                          <ChevronLeft size={20} />
+                          <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
                           Previous
                         </button>
 
@@ -174,7 +174,7 @@ export default function GenresPage() {
                           className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-yellow-400/30 shadow-lg shadow-yellow-500/20"
                         >
                           Next
-                          <ChevronRight size={20} />
+                          <FontAwesomeIcon icon={faChevronRight} className="text-[20px]" />
                         </button>
                       </div>
                     )}

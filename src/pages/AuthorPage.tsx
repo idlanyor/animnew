@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Github, Code, Database, Globe2 } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCode, faDatabase, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import Image from 'next/image';
 
 interface Author {
   name: string;
@@ -84,10 +85,9 @@ export default function AuthorPage() {
             <div className="p-6">
               <div className="flex items-center mb-6">
                 <div className="relative w-20 h-20 mr-4">
-                  <Image
+                  <img
                     src={author.avatar}
                     alt={author.name}
-                    fill
                     className="rounded-full border-2 border-blue-500 object-cover"
                   />
                 </div>
@@ -96,12 +96,12 @@ export default function AuthorPage() {
                   <p className="text-blue-400 flex items-center gap-2">
                     {author.role === 'Author Utama' ? (
                       <>
-                        <Code className="h-4 w-4" />
+                        <FontAwesomeIcon icon={faCode} className="h-4 w-4" />
                         {author.role}
                       </>
                     ) : (
                       <>
-                        <Database className="h-4 w-4" />
+                        <FontAwesomeIcon icon={faDatabase} className="h-4 w-4" />
                         {author.role}
                       </>
                     )}
@@ -113,7 +113,7 @@ export default function AuthorPage() {
 
               <div className="mb-6">
                 <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
-                  <Code className="h-4 w-4" />
+                  <FontAwesomeIcon icon={faCode} className="h-4 w-4" />
                   Skills:
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -122,7 +122,7 @@ export default function AuthorPage() {
                       key={skill}
                       className="bg-gray-800 text-blue-400 px-3 py-1 rounded-full text-sm flex items-center gap-1"
                     >
-                      {skill.toLowerCase().includes('database') ? <Database className="h-3 w-3" /> : <Code className="h-3 w-3" />}
+                      {skill.toLowerCase().includes('database') ? <FontAwesomeIcon icon={faDatabase} className="h-3 w-3" /> : <FontAwesomeIcon icon={faCode} className="h-3 w-3" />}
                       {skill}
                     </span>
                   ))}
@@ -136,14 +136,14 @@ export default function AuthorPage() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
-                  <Github className="h-5 w-5" />
+                  <FontAwesomeIcon icon={faGithub} className="h-5 w-5" />
                   GitHub Profile
                 </a>
                 <a
                   href={author.website}
                   className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
-                  <Globe2 className="h-5 w-5" />
+                  <FontAwesomeIcon icon={faGlobe} className="h-5 w-5" />
                   Website
                 </a>
               </div>

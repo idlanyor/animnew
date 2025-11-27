@@ -1,9 +1,7 @@
-'use client';
-
 import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight, faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 interface AnimeItem {
   anime_name: string;
@@ -52,55 +50,51 @@ export default function TodayAnimeCarousel({ animeList, dayName }: TodayAnimeCar
   const currentAnime = animeList[currentIndex];
 
   return (
-    <section className="relative bg-gradient-to-r from-yellow-500 via-amber-500 to-blue-600 overflow-hidden">
-      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+    <section className="relative bg-gray-900 overflow-hidden">
+      <div className="absolute inset-0 bg-black/60"></div>
 
       {/* Background Image */}
       <div className="absolute inset-0">
-        <Image
+        <img
           src={currentAnime.poster}
           alt={currentAnime.anime_name}
-          fill
-          className="object-cover opacity-20 blur-sm"
-          priority
+          className="w-full h-full object-cover opacity-20"
         />
       </div>
 
       {/* Content */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <div className="flex flex-col md:flex-row items-center gap-8">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+        <div className="flex flex-col md:flex-row items-center gap-4">
           {/* Poster */}
           <div className="flex-shrink-0">
             <Link
-              href={`/anime/${currentAnime.slug}`}
-              className="block relative w-48 h-64 md:w-64 md:h-96 rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300"
+              to={`/anime/${currentAnime.slug}`}
+              className="block relative w-40 h-56 md:w-48 md:h-72 rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300"
             >
-              <Image
+              <img
                 src={currentAnime.poster}
                 alt={currentAnime.anime_name}
-                fill
-                className="object-cover"
-                priority
+                className="w-full h-full object-cover"
               />
             </Link>
           </div>
 
           {/* Info */}
           <div className="flex-1 text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
-              <Calendar className="text-yellow-300" size={24} />
-              <span className="text-yellow-300 font-semibold text-lg">
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-3">
+              <FontAwesomeIcon icon={faCalendar} className="text-yellow-400 text-lg" />
+              <span className="text-yellow-400 font-semibold text-base">
                 Anime Rilis Hari Ini - {dayName}
               </span>
             </div>
 
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-lg">
+            <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
               {currentAnime.anime_name}
             </h2>
 
             <Link
-              href={`/anime/${currentAnime.slug}`}
-              className="inline-block bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
+              to={`/anime/${currentAnime.slug}`}
+              className="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
             >
               Tonton Sekarang
             </Link>
@@ -115,28 +109,28 @@ export default function TodayAnimeCarousel({ animeList, dayName }: TodayAnimeCar
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
               aria-label="Previous anime"
             >
-              <ChevronLeft size={24} />
+              <FontAwesomeIcon icon={faChevronLeft} className="text-lg" />
             </button>
             <button
               onClick={nextSlide}
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
               aria-label="Next anime"
             >
-              <ChevronRight size={24} />
+              <FontAwesomeIcon icon={faChevronRight} className="text-lg" />
             </button>
           </>
         )}
 
         {/* Dots Indicator */}
         {animeList.length > 1 && (
-          <div className="flex justify-center gap-2 mt-8">
+          <div className="flex justify-center gap-2 mt-4">
             {animeList.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`w-2 h-2 rounded-full transition-all ${
                   index === currentIndex
-                    ? 'bg-yellow-400 w-8'
+                    ? 'bg-yellow-400 w-6'
                     : 'bg-white/50 hover:bg-white/75'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { getSchedule, Schedule } from '@/lib/api';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Link } from 'react-router-dom';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Calendar, ChevronRight } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendar, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function SchedulePage() {
   const [scheduleData, setScheduleData] = useState<Schedule[]>([]);
@@ -54,7 +54,7 @@ export default function SchedulePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-8 space-x-2">
-        <Calendar className="h-8 w-8 text-blue-500" />
+        <FontAwesomeIcon icon={faCalendar} className="h-8 w-8 text-blue-500" />
         <h1 className="text-3xl font-bold text-white">Anime Schedule</h1>
       </div>
 
@@ -70,16 +70,15 @@ export default function SchedulePage() {
                   {day.anime_list.map((anime) => (
                     <Link
                       key={anime.slug}
-                      href={`/anime/${anime.slug}`}
+                      to={`/anime/${anime.slug}`}
                       className="flex items-center gap-4 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all group"
                     >
                       <div className="relative w-16 h-20 flex-shrink-0 rounded overflow-hidden">
-                        <Image
+                        <img
                           src={anime.poster || '/placeholder.png'}
                           alt={anime.anime_name}
-                          fill
                           className="object-cover"
-                          sizes="64px"
+                          style={{ width: '64px', height: '80px' }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -87,7 +86,7 @@ export default function SchedulePage() {
                           {anime.anime_name}
                         </h3>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-gray-500 group-hover:text-blue-400 transition-colors flex-shrink-0" />
+                      <FontAwesomeIcon icon={faChevronRight} className="h-5 w-5 text-gray-500 group-hover:text-blue-400 transition-colors flex-shrink-0" />
                     </Link>
                   ))}
                 </div>

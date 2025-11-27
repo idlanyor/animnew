@@ -1,14 +1,12 @@
-'use client';
-
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { searchAnimeBySanka, AnimeItem } from '@/lib/api';
 import AnimeCard from '@/components/AnimeCard';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { Search } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
-function SearchContent() {
-  const searchParams = useSearchParams();
+export default function SearchPage() {
+  const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
 
   const [animeList, setAnimeList] = useState<AnimeItem[]>([]);
@@ -69,12 +67,12 @@ function SearchContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <Search className="text-pink-200" size={48} />
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="text-pink-200 text-[48px]" />
               <h1 className="text-4xl md:text-5xl font-bold text-white">
                 Search Anime
               </h1>
             </div>
-            
+
             {/* Search Form */}
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
               <div className="relative mb-3">
@@ -85,7 +83,7 @@ function SearchContent() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-gray-800 text-white placeholder-gray-400 rounded-lg pl-12 pr-4 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-pink-500 border border-pink-400/30 shadow-lg shadow-pink-500/20"
                 />
-                <Search className={`absolute left-4 top-4 h-6 w-6 ${loading ? 'text-pink-400 animate-pulse' : 'text-gray-400'}`} />
+                <FontAwesomeIcon icon={faMagnifyingGlass} className={`absolute left-4 top-4 h-6 w-6 ${loading ? 'text-pink-400 animate-pulse' : 'text-gray-400'}`} />
               </div>
               <p className="text-gray-400 text-sm mb-6 text-center">
                 {loading ? (
@@ -106,7 +104,7 @@ function SearchContent() {
         {error ? (
           <div className="text-center py-12">
             <div className="text-red-500 mb-4">
-              <Search className="mx-auto mb-2" size={48} />
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="mx-auto mb-2 text-[48px]" />
               <p className="text-lg font-semibold">{error}</p>
             </div>
             <button
@@ -137,7 +135,7 @@ function SearchContent() {
           </>
         ) : searchQuery ? (
           <div className="text-center py-12">
-            <Search className="text-gray-500 mx-auto mb-4" size={64} />
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="text-gray-500 mx-auto mb-4 text-[64px]" />
             <h2 className="text-xl font-semibold text-white mb-2">
               No results found for &quot;{searchQuery}&quot;
             </h2>
@@ -153,7 +151,7 @@ function SearchContent() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <Search className="text-gray-500 mx-auto mb-4" size={64} />
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="text-gray-500 mx-auto mb-4 text-[64px]" />
             <h2 className="text-xl font-semibold text-white mb-2">
               Live Search Ready
             </h2>
@@ -171,16 +169,3 @@ function SearchContent() {
     </div>
   );
 }
-
-export default function SearchPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <LoadingSpinner size="lg" text="Loading search..." />
-      </div>
-    }>
-      <SearchContent />
-    </Suspense>
-  );
-}
-

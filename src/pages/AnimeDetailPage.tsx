@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
+import {Link,useParams} from 'react-router-dom';
 import { getAnimeDetailBySanka, AnimeDetail } from '@/lib/api';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Play, Calendar, Clock, Star, Users, Building, Tag } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { generateAnimeSEOData } from '@/lib/seo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlay, faCalendar, faClock, faStar, faUsers, faBuilding, faTag } from '@fortawesome/free-solid-svg-icons';
 
 export default function AnimeDetailPage() {
   const params = useParams();
@@ -35,6 +36,19 @@ export default function AnimeDetailPage() {
     }
   }, [slug]);
 
+  // Generate SEO data when anime data is available
+  const seoData = anime ? generateAnimeSEOData({
+    title: anime.judul,
+    synopsis: anime.synopsis,
+    image: anime.gambar,
+    slug: slug, // Use slug from URL params
+    type: anime.tipe,
+    status: anime.status,
+    score: anime.skor,
+    genres: anime.genre ? anime.genre.split(',').map(g => g.trim()) : [],
+    releaseYear: anime.rilis,
+  }) : null;
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
@@ -49,7 +63,7 @@ export default function AnimeDetailPage() {
         <div className="text-center">
           <p className="text-red-500 text-xl mb-4">{error || 'Anime not found'}</p>
           <Link 
-            href="/" 
+            to="/"
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
           >
             Back to Home
@@ -60,17 +74,17 @@ export default function AnimeDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <>
+      {seoData && <SEOHead {...seoData} />}
+      <div className="min-h-screen bg-black">
       {/* Hero Section */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent z-10"></div>
         <div className="relative h-96 md:h-[500px] overflow-hidden">
-          <Image
+          <img
             src={anime.gambar}
             alt={anime.judul}
-            fill
-            className="object-cover object-center"
-            priority
+            className="w-full h-full object-cover object-center"
           />
         </div>
         
@@ -86,7 +100,7 @@ export default function AnimeDetailPage() {
             <div className="flex flex-wrap items-center gap-4 mb-6">
               {anime.skor && (
                 <div className="flex items-center gap-2 bg-yellow-500 text-black px-3 py-1 rounded-full">
-                  <Star size={16} fill="currentColor" />
+                  <FontAwesomeIcon icon={faStar} className="text-[16px]" />
                   <span className="font-semibold">{anime.skor}</span>
                 </div>
               )}
@@ -119,23 +133,23 @@ export default function AnimeDetailPage() {
               <h2 className="text-2xl font-bold text-white mb-6">Anime Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 text-gray-300">
-                  <Calendar className="text-blue-500" size={20} />
+                  <FontAwesomeIcon icon={faCalendar} className="text-blue-500 text-[20px]" />
                   <span>{anime.rilis}</span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-300">
-                  <Clock className="text-green-500" size={20} />
+                  <FontAwesomeIcon icon={faClock} className="text-green-500 text-[20px]" />
                   <span>{anime.durasi}</span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-300">
-                  <Building className="text-purple-500" size={20} />
+                  <FontAwesomeIcon icon={faBuilding} className="text-purple-500 text-[20px]" />
                   <span>{anime.studio}</span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-300">
-                  <Users className="text-orange-500" size={20} />
+                  <FontAwesomeIcon icon={faUsers} className="text-orange-500 text-[20px]" />
                   <span>{anime.produser}</span>
                 </div>
                 <div className="flex items-center gap-3 text-gray-300 md:col-span-2">
-                  <Tag className="text-pink-500" size={20} />
+                  <FontAwesomeIcon icon={faTag} className="text-pink-500 text-[20px]" />
                   <span>{anime.totalEpisode}</span>
                 </div>
               </div>
@@ -165,7 +179,7 @@ export default function AnimeDetailPage() {
                   {anime.episodes.map((episode, index) => (
                     <Link
                       key={episode.slug}
-                      href={`/episode/${episode.slug}`}
+                      to={`/episode/${episode.slug}`}
                       className="bg-gray-800 hover:bg-gray-700 rounded-lg p-4 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
@@ -178,7 +192,7 @@ export default function AnimeDetailPage() {
                           </h3>
                           <p className="text-gray-400 text-sm">{episode.tanggal}</p>
                         </div>
-                        <Play className="text-gray-400 group-hover:text-blue-400 transition-colors" size={20} />
+                        <FontAwesomeIcon icon={faPlay} className="text-gray-400 group-hover:text-blue-400 transition-colors text-[20px]" />
                       </div>
                     </Link>
                   ))}
@@ -192,11 +206,10 @@ export default function AnimeDetailPage() {
             {/* Poster */}
             <div className="bg-gray-900 rounded-lg p-6 mb-8">
               <div className="aspect-[3/4] relative rounded-lg overflow-hidden mb-4">
-                <Image
+                <img
                   src={anime.gambar}
                   alt={anime.judul}
-                  fill
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
               
@@ -207,7 +220,7 @@ export default function AnimeDetailPage() {
                   
                   {anime.batch && (
                     <Link
-                      href={`/episode/${anime.batch.slug}`}
+                      to={`/episode/${anime.batch.slug}`}
                       className="block bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg transition-colors font-medium"
                     >
                       Download Batch
@@ -216,7 +229,7 @@ export default function AnimeDetailPage() {
                   
                   {anime.lengkap && (
                     <Link
-                      href={`/episode/${anime.lengkap.slug}`}
+                      to={`/episode/${anime.lengkap.slug}`}
                       className="block bg-blue-600 hover:bg-blue-700 text-white text-center py-3 rounded-lg transition-colors font-medium"
                     >
                       Download Complete
@@ -236,7 +249,7 @@ export default function AnimeDetailPage() {
               {anime.recommendations.map((rec) => (
                 <Link
                   key={rec.slug}
-                  href={`/anime/${rec.slug}`}
+                  to={`/anime/${rec.slug}`}
                   className="group"
                 >
                   <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg overflow-hidden transition-all duration-300 transform hover:scale-105">
@@ -246,11 +259,10 @@ export default function AnimeDetailPage() {
                     <div className="relative border border-cyan-500/20 group-hover:border-cyan-500/50 rounded-lg overflow-hidden transition-all duration-300">
                       {/* Poster */}
                       <div className="aspect-[3/4] relative overflow-hidden">
-                        <Image
+                        <img
                           src={rec.poster}
                           alt={rec.title}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />
                         {/* Overlay gradient */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -270,7 +282,8 @@ export default function AnimeDetailPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

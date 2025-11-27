@@ -1,10 +1,12 @@
-'use client';
 
 import { useState, useEffect } from 'react';
 import { getMovieList, searchMovies, MovieItem, MoviePagination } from '@/lib/api';
 import MovieCard from '@/components/MovieCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Film, TrendingUp, Calendar } from 'lucide-react';
+import SEOHead from '@/components/SEOHead';
+import { generatePageSEOData } from '@/lib/seo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilm, faArrowTrendUp, faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 export default function MoviePage() {
   const [movies, setMovies] = useState<MovieItem[]>([]);
@@ -69,6 +71,14 @@ export default function MoviePage() {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
+  // Generate SEO data for movie page
+  const seoData = generatePageSEOData({
+    title: 'Nonton Anime Movie Sub Indo HD Gratis - KanataAnime',
+    description: 'Nonton anime movie subtitle Indonesia gratis di KanataAnime. Koleksi lengkap anime movie terbaru dengan kualitas HD 720p tanpa iklan. Streaming anime movie terbaik dengan subtitle Indonesia.',
+    keywords: 'nonton anime movie, anime movie sub indo, streaming anime movie, anime movie subtitle indonesia, kanatanime, anime movie gratis, anime movie terbaru, anime movie HD, anime movie tanpa iklan',
+    url: '/movie',
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -94,7 +104,9 @@ export default function MoviePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black">
+    <>
+      <SEOHead {...seoData} />
+      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black">
       {/* Hero Section with Glassmorphism */}
       <section className="relative overflow-hidden py-16 sm:py-20 md:py-24 lg:py-28">
         {/* Animated Background Gradients */}
@@ -157,7 +169,7 @@ export default function MoviePage() {
                   />
                   <div className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2">
                     <div className="glass-badge p-3 rounded-xl bg-gradient-to-r from-yellow-500/20 to-blue-500/20 border border-white/10">
-                      <Film className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400" />
+                      <FontAwesomeIcon icon={faFilm} className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400" />
                     </div>
                   </div>
                 </div>
@@ -178,7 +190,7 @@ export default function MoviePage() {
                 <div className="relative glass-card px-6 py-4 rounded-2xl border border-white/10">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/20 to-purple-500/20">
-                      <Film className="text-yellow-400 flex-shrink-0" size={24} />
+                      <FontAwesomeIcon icon={faFilm} className="text-yellow-400 flex-shrink-0 text-[24px]" />
                     </div>
                     <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                       Search Results for &quot;{searchQuery}&quot;
@@ -222,7 +234,7 @@ export default function MoviePage() {
                 <div className="relative glass-card px-6 py-4 rounded-2xl border border-white/10">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-500/20">
-                      <Film className="text-blue-400 flex-shrink-0" size={24} />
+                      <FontAwesomeIcon icon={faFilm} className="text-blue-400 flex-shrink-0 text-[24px]" />
                     </div>
                     <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                       All Movies
@@ -326,7 +338,7 @@ export default function MoviePage() {
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl blur-md opacity-50"></div>
                   <div className="relative bg-gradient-to-br from-yellow-500 to-amber-600 w-20 h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <Film className="text-white" size={40} />
+                    <FontAwesomeIcon icon={faFilm} className="text-white text-[40px]" />
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-yellow-400 transition-colors">
@@ -345,7 +357,7 @@ export default function MoviePage() {
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl blur-md opacity-50"></div>
                   <div className="relative bg-gradient-to-br from-blue-500 to-blue-700 w-20 h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <TrendingUp className="text-white" size={40} />
+                    <FontAwesomeIcon icon={faArrowTrendUp} className="text-white text-[40px]" />
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
@@ -364,7 +376,7 @@ export default function MoviePage() {
                 <div className="relative inline-block mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-blue-600 rounded-2xl blur-md opacity-50"></div>
                   <div className="relative bg-gradient-to-br from-yellow-400 to-blue-600 w-20 h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <Calendar className="text-white" size={40} />
+                    <FontAwesomeIcon icon={faCalendar} className="text-white text-[40px]" />
                   </div>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors">
@@ -378,6 +390,7 @@ export default function MoviePage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

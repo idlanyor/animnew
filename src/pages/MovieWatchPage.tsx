@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Link, useParams } from 'react-router-dom';
 import { getMovieWatch, getServerUrl, MovieWatch } from '@/lib/api';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Monitor, ArrowLeft, ChevronLeft, ChevronRight, Download, Play, Film } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDesktop, faArrowLeft, faChevronLeft, faChevronRight, faDownload, faPlay, faFilm } from '@fortawesome/free-solid-svg-icons';
 
 export default function MovieWatchPage() {
   const params = useParams();
@@ -113,7 +112,7 @@ export default function MovieWatchPage() {
         <div className="text-center">
           <p className="text-red-500 text-xl mb-4">{error || 'Movie not found'}</p>
           <Link
-            href="/movie"
+            to="/movie"
             className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors"
           >
             Back to Movies
@@ -130,17 +129,17 @@ export default function MovieWatchPage() {
         <div className="mb-4 sm:mb-6 md:mb-8">
           <div className="mb-3 sm:mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
             <Link
-              href="/movie"
+              to="/movie"
               className="inline-flex items-center gap-1.5 sm:gap-2 text-yellow-400 hover:text-yellow-300 transition-colors text-sm sm:text-base touch-manipulation active:scale-95"
             >
-              <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
+              <FontAwesomeIcon icon={faArrowLeft} className="text-[18px] sm:w-5 sm:h-5" />
               <span className="sm:inline">Back to Movies</span>
             </Link>
             <Link
-              href={`/movie/${movieData.data.animeId}`}
+              to={`/movie/${movieData.data.animeId}`}
               className="inline-flex items-center gap-1.5 sm:gap-2 text-blue-400 hover:text-blue-300 transition-colors text-sm sm:text-base touch-manipulation active:scale-95"
             >
-              <Film size={18} className="sm:w-5 sm:h-5" />
+              <FontAwesomeIcon icon={faFilm} className="text-[18px] sm:w-5 sm:h-5" />
               <span className="hidden sm:inline">View Movie Details</span>
               <span className="sm:hidden">Details</span>
             </Link>
@@ -206,7 +205,7 @@ export default function MovieWatchPage() {
                     {videoError && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 z-10">
                         <div className="text-center text-white">
-                          <Monitor className="text-red-500 mx-auto mb-4" size={64} />
+                          <FontAwesomeIcon icon={faDesktop} className="text-red-500 mx-auto mb-4 text-[64px]" />
                           <p className="text-red-400 mb-4">Failed to load video</p>
                           <button
                             onClick={() => {
@@ -228,7 +227,7 @@ export default function MovieWatchPage() {
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="text-center">
-                      <Monitor className="text-gray-500 mx-auto mb-4" size={64} />
+                      <FontAwesomeIcon icon={faDesktop} className="text-gray-500 mx-auto mb-4 text-[64px]" />
                       <p className="text-gray-400">No video source available</p>
                     </div>
                   </div>
@@ -277,11 +276,10 @@ export default function MovieWatchPage() {
                                 }
                               }}
                               disabled={loadingServer && selectedServerId === server.serverId}
-                              className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all text-xs sm:text-sm font-medium touch-manipulation active:scale-95 ${
-                                selectedServerId === server.serverId
-                                  ? 'bg-gradient-to-r from-yellow-500 to-blue-600 text-white'
-                                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                              } ${loadingServer && selectedServerId === server.serverId ? 'opacity-50 cursor-wait' : ''}`}
+                              className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all text-xs sm:text-sm font-medium touch-manipulation active:scale-95 ${selectedServerId === server.serverId
+                                ? 'bg-gradient-to-r from-yellow-500 to-blue-600 text-white'
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                                } ${loadingServer && selectedServerId === server.serverId ? 'opacity-50 cursor-wait' : ''}`}
                             >
                               {loadingServer && selectedServerId === server.serverId ? (
                                 <>
@@ -290,7 +288,7 @@ export default function MovieWatchPage() {
                                 </>
                               ) : (
                                 <>
-                                  <Play size={14} className="inline mr-1" />
+                                  <FontAwesomeIcon icon={faPlay} className="text-[14px] inline mr-1" />
                                   {server.title}
                                 </>
                               )}
@@ -310,22 +308,22 @@ export default function MovieWatchPage() {
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
                 {movieData.data.hasPrevEpisode && movieData.data.prevEpisode && (
                   <Link
-                    href={`/movie/watch/${movieData.data.prevEpisode.episodeId}`}
+                    to={`/movie/watch/${movieData.data.prevEpisode.episodeId}`}
                     className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-yellow-500 to-blue-600 hover:from-yellow-600 hover:to-blue-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all text-xs sm:text-sm font-medium touch-manipulation active:scale-95"
                   >
-                    <ChevronLeft size={16} className="sm:w-5 sm:h-5" />
+                    <FontAwesomeIcon icon={faChevronLeft} className="text-[16px] sm:w-5 sm:h-5" />
                     <span className="hidden sm:inline">Previous Episode</span>
                     <span className="sm:hidden">Previous</span>
                   </Link>
                 )}
                 {movieData.data.hasNextEpisode && movieData.data.nextEpisode && (
                   <Link
-                    href={`/movie/watch/${movieData.data.nextEpisode.episodeId}`}
+                    to={`/movie/watch/${movieData.data.nextEpisode.episodeId}`}
                     className="flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-yellow-500 to-blue-600 hover:from-yellow-600 hover:to-blue-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all text-xs sm:text-sm font-medium touch-manipulation active:scale-95"
                   >
                     <span className="hidden sm:inline">Next Episode</span>
                     <span className="sm:hidden">Next</span>
-                    <ChevronRight size={16} className="sm:w-5 sm:h-5" />
+                    <FontAwesomeIcon icon={faChevronRight} className="text-[16px] sm:w-5 sm:h-5" />
                   </Link>
                 )}
                 {!movieData.data.hasPrevEpisode && !movieData.data.hasNextEpisode && (
@@ -338,7 +336,7 @@ export default function MovieWatchPage() {
             {movieData.data.downloadUrl && movieData.data.downloadUrl.formats.length > 0 && (
               <div className="bg-gray-900 rounded-lg p-4 sm:p-5 md:p-6 mb-4 sm:mb-6">
                 <h2 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4 flex items-center gap-2">
-                  <Download size={20} className="sm:w-6 sm:h-6 text-yellow-400" />
+                  <FontAwesomeIcon icon={faDownload} className="text-[20px] sm:w-6 sm:h-6 text-yellow-400" />
                   Download Options
                 </h2>
                 <div className="space-y-4 sm:space-y-5 md:space-y-6">
@@ -390,11 +388,9 @@ export default function MovieWatchPage() {
             {movieData.data.poster && (
               <div className="bg-gray-900 rounded-lg p-4 sm:p-5 md:p-6 mb-4 sm:mb-6">
                 <div className="aspect-[3/4] relative rounded-lg overflow-hidden">
-                  <Image
+                  <img
                     src={movieData.data.poster}
                     alt={movieData.data.title}
-                    fill
-                    unoptimized
                     className="object-cover"
                   />
                 </div>
@@ -416,7 +412,7 @@ export default function MovieWatchPage() {
                 <div className="flex justify-between items-start">
                   <span className="text-gray-400 text-xs sm:text-sm">Anime:</span>
                   <Link
-                    href={`/movie/${movieData.data.animeId}`}
+                    to={`/movie/${movieData.data.animeId}`}
                     className="text-yellow-400 hover:text-yellow-300 text-right transition-colors text-xs sm:text-sm touch-manipulation"
                   >
                     View Series
@@ -424,11 +420,10 @@ export default function MovieWatchPage() {
                 </div>
                 <div className="flex justify-between items-start">
                   <span className="text-gray-400 text-xs sm:text-sm">Player:</span>
-                  <span className={`text-right text-xs sm:text-sm ${
-                    !videoLoading && !videoError ? 'text-green-400' :
+                  <span className={`text-right text-xs sm:text-sm ${!videoLoading && !videoError ? 'text-green-400' :
                     videoError ? 'text-red-400' :
-                    'text-yellow-400'
-                  }`}>
+                      'text-yellow-400'
+                    }`}>
                     {!videoLoading && !videoError ? 'Ready' : videoError ? 'Error' : 'Loading'}
                   </span>
                 </div>
@@ -460,16 +455,14 @@ export default function MovieWatchPage() {
                   {movieData.data.recommendedEpisodeList.slice(0, 5).map((episode, index) => (
                     <Link
                       key={`${episode.episodeId}-${index}`}
-                      href={`/movie/watch/${episode.episodeId}`}
+                      to={`/movie/watch/${episode.episodeId}`}
                       className="block group touch-manipulation active:scale-98"
                     >
                       <div className="flex gap-2 sm:gap-3">
                         <div className="w-16 h-24 sm:w-20 sm:h-28 relative flex-shrink-0 rounded overflow-hidden">
-                          <Image
+                          <img
                             src={episode.poster}
                             alt={episode.title}
-                            fill
-                            unoptimized
                             className="object-cover"
                           />
                         </div>
@@ -496,16 +489,14 @@ export default function MovieWatchPage() {
               {movieData.data.movie.animeList.slice(0, 6).map((anime, index) => (
                 <Link
                   key={`${anime.animeId}-${index}`}
-                  href={`/movie/${anime.animeId}`}
+                  to={`/movie/${anime.animeId}`}
                   className="group block touch-manipulation"
                 >
                   <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 active:scale-95">
                     <div className="aspect-[2/3] sm:aspect-[3/4] relative overflow-hidden">
-                      <Image
+                      <img
                         src={anime.poster}
                         alt={anime.title}
-                        fill
-                        unoptimized
                         className="object-cover group-hover:scale-110 transition-transform duration-300"
                         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
                       />
