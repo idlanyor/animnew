@@ -13,6 +13,7 @@ import AnimeDetailPage from './pages/AnimeDetailPage';
 import EpisodePage from './pages/EpisodePage';
 import MovieDetailPage from './pages/MovieDetailPage';
 import MovieWatchPage from './pages/MovieWatchPage';
+import FavoritesPage from './pages/FavoritesPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/schedule" element={<SchedulePage />} />
           <Route path="/genres" element={<GenresPage />} />
           <Route path="/movie" element={<MoviePage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/author" element={<AuthorPage />} />
           <Route path="/anime/:slug" element={<AnimeDetailPage />} />
           <Route path="/episode/:slug" element={<EpisodePage />} />

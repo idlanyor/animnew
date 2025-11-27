@@ -1,16 +1,27 @@
 import { Link } from 'react-router-dom';
 import { AnimeItem } from '@/lib/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faPlay, faCalendar, faClock, faBolt } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faPlay, faCalendar, faClock, faBolt, faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import { useBookmarks } from '@/contexts/BookmarkContext';
 
 interface AnimeCardProps {
   anime: AnimeItem;
 }
 
 export default function AnimeCard({ anime }: AnimeCardProps) {
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const bookmarked = isBookmarked(anime.slug);
+
   // Check if this is ongoing or complete anime based on available fields
   const isOngoing = anime.current_episode && anime.release_day;
   const isComplete = anime.episode_count && anime.rating;
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleBookmark(anime, 'anime');
+  };
 
   return (
     <Link to={`/anime/${anime.slug}`} className="group block">
@@ -56,6 +67,18 @@ export default function AnimeCard({ anime }: AnimeCardProps) {
                 </div>
               </div>
             )}
+
+            {/* Bookmark button */}
+            <button
+              onClick={handleBookmarkClick}
+              className="absolute bottom-2 right-2 z-20 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
+              aria-label={bookmarked ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <FontAwesomeIcon
+                icon={bookmarked ? faHeartSolid : faHeartRegular}
+                className={`h-4 w-4 ${bookmarked ? 'text-red-500' : 'text-white'}`}
+              />
+            </button>
           </div>
 
           {/* Info section */}

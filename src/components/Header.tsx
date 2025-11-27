@@ -10,6 +10,7 @@ const navLinks = [
   { href: '/schedule', label: 'Schedule' },
   { href: '/genres', label: 'Genres' },
   { href: '/movie', label: 'Movie' },
+  { href: '/favorites', label: 'Favorites' },
   { href: '/author', label: 'Author' },
 ];
 

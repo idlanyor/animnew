@@ -1,13 +1,23 @@
 import { Link } from 'react-router-dom';
 import { MovieItem } from '@/lib/api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import { useBookmarks } from '@/contexts/BookmarkContext';
 
 interface MovieCardProps {
   movie: MovieItem;
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const bookmarked = isBookmarked(movie.slug);
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleBookmark(movie, 'movie');
+  };
   return (
     <Link to={`/movie/${movie.slug}`} className="group block">
       <div className="relative overflow-hidden rounded-lg transition-transform duration-200 group-hover:scale-[1.02]">
@@ -57,6 +67,18 @@ export default function MovieCard({ movie }: MovieCardProps) {
                 </div>
               </div>
             )}
+
+            {/* Bookmark button */}
+            <button
+              onClick={handleBookmarkClick}
+              className="absolute top-2 left-2 z-20 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/20 p-2 rounded-full transition-all duration-200 hover:scale-110"
+              aria-label={bookmarked ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <FontAwesomeIcon
+                icon={bookmarked ? faHeartSolid : faHeartRegular}
+                className={`h-4 w-4 ${bookmarked ? 'text-red-500' : 'text-white'}`}
+              />
+            </button>
           </div>
 
           {/* Info Section */}
