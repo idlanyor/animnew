@@ -13,6 +13,14 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       // Refetch on reconnect
       refetchOnReconnect: true,
+      // Add background refetching for better UX
+      refetchOnMount: 'always',
+      // Prevent multiple simultaneous requests
+      refetchInterval: false,
+    },
+    mutations: {
+      // Retry failed mutations once
+      retry: 1,
     },
   },
 });

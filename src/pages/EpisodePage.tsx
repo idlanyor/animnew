@@ -2,13 +2,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getEpisode, getMirrorEpisode, getNonce, getIframe, Episode } from '@/lib/api';
+import { useWatchHistory } from '@/contexts/WatchHistoryContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faDownload, faDesktop, faMobile, faTv, faArrowLeft, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faDownload, faDesktop, faMobile, faTv, faArrowLeft, faChevronLeft, faChevronRight, faServer, faCircleCheck, faHome } from '@fortawesome/free-solid-svg-icons';
 
 export default function EpisodePage() {
   const params = useParams();
   const slug = params.slug as string;
+  const { addToHistory } = useWatchHistory();
 
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [loading, setLoading] = useState(true);
@@ -133,10 +135,24 @@ export default function EpisodePage() {
     }
   }, [episode, selectedServer, selectedQuality, getCurrentMirrors]);
 
+  // Save to watch history
+  useEffect(() => {
+    if (episode) {
+      const animeSlug = slug.replace(/-episode-\d+$/i, '');
+      addToHistory({
+        slug: animeSlug,
+        title: episode.judul,
+        episode: `Episode ${currentEpisodeNumber}`,
+        episodeSlug: slug,
+        type: 'anime',
+      });
+    }
+  }, [episode, slug, currentEpisodeNumber, addToHistory]);
+
   // NOW the early returns can happen AFTER all hooks
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
         <LoadingSpinner size="lg" text="Loading episode..." />
       </div>
     );
@@ -144,7 +160,7 @@ export default function EpisodePage() {
 
   if (error || !episode) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
         <div className="text-center">
           <p className="text-red-500 text-xl mb-4">{error || 'Episode not found'}</p>
           <Link
@@ -163,35 +179,120 @@ export default function EpisodePage() {
   const downloads = getCurrentDownloads();
 
   return (
-    <div className="min-h-screen bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="mb-4">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              <FontAwesomeIcon icon={faArrowLeft} className="text-[20px]" />
-              Back to Home
-            </Link>
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
+      {/* Header Bar */}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-14 sm:top-16 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <Link
+                to="/"
+                className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0"
+              >
+                <FontAwesomeIcon icon={faHome} className="w-4 h-4" />
+              </Link>
+              <h1 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white truncate">
+                {episode.judul}
+              </h1>
+            </div>
+            {/* Episode Navigation */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {previousEpisodeSlug ? (
+                <Link
+                  to={`/episode/${previousEpisodeSlug}`}
+                  className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50"
+                  title="Episode Sebelumnya"
+                >
+                  <FontAwesomeIcon icon={faChevronLeft} className="w-4 h-4" />
+                </Link>
+              ) : (
+                <button disabled className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed">
+                  <FontAwesomeIcon icon={faChevronLeft} className="w-4 h-4" />
+                </button>
+              )}
+              {nextEpisodeSlug ? (
+                <Link
+                  to={`/episode/${nextEpisodeSlug}`}
+                  className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50"
+                  title="Episode Selanjutnya"
+                >
+                  <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4" />
+                </Link>
+              ) : (
+                <button disabled className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed">
+                  <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
-
-          <h1 className="text-3xl md:text-4xl font-bold text-white">
-            {episode.judul}
-          </h1>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Video Player */}
-          <div className="lg:col-span-3">
-            <div className="bg-gray-900 rounded-lg overflow-hidden mb-6">
-              {/* Quality Selector */}
-              <div className="bg-gray-800 p-4 border-b border-gray-700">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <h2 className="text-white font-semibold">Video Player</h2>
+          <div className="lg:col-span-3 space-y-4">
+            {/* Video Container */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm">
+              {/* Video Frame */}
+              <div className="aspect-video bg-black relative">
+                {loadingVideo ? (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                    <LoadingSpinner size="lg" text="Memuat video..." />
+                  </div>
+                ) : episode.iframe && episode.iframe.startsWith('http') ? (
+                  <iframe
+                    src={episode.iframe}
+                    className="w-full h-full"
+                    allowFullScreen
+                    allow="autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture; fullscreen"
+                    referrerPolicy="no-referrer"
+                    title={episode.judul}
+                  />
+                ) : videoUrl && videoUrl.startsWith('http') ? (
+                  <iframe
+                    src={videoUrl}
+                    className="w-full h-full"
+                    allowFullScreen
+                    allow="autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture; fullscreen"
+                    referrerPolicy="no-referrer"
+                    title={episode.judul}
+                  />
+                ) : mirrors.length > 0 && mirrors[selectedServer] ? (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                    <div className="text-center p-6">
+                      <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                        <FontAwesomeIcon icon={faPlay} className="text-white text-3xl ml-1" />
+                      </div>
+                      <p className="text-white font-medium mb-1">{mirrors[selectedServer].nama}</p>
+                      <p className="text-gray-400 text-sm mb-4">{selectedQuality}</p>
+                      <button
+                        onClick={() => loadVideoFromServer(mirrors[selectedServer].content)}
+                        className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-full"
+                      >
+                        Putar Video
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                    <div className="text-center p-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
+                        <FontAwesomeIcon icon={faDesktop} className="text-gray-500 text-2xl" />
+                      </div>
+                      <p className="text-gray-400 font-medium mb-1">Video tidak tersedia</p>
+                      <p className="text-gray-500 text-sm">Silakan pilih server lain atau kualitas berbeda</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Controls Bar */}
+              <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+                {/* Quality Selector */}
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-400 text-sm">Quality:</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Kualitas:</span>
                     <div className="flex gap-1">
                       {['360p', '480p', '720p'].map((quality) => (
                         <button
@@ -200,9 +301,9 @@ export default function EpisodePage() {
                             setSelectedQuality(quality as '360p' | '480p' | '720p');
                             setSelectedServer(0);
                           }}
-                          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${selectedQuality === quality
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          className={`px-3 py-1.5 rounded-full text-sm font-medium ${selectedQuality === quality
+                              ? 'bg-purple-600 text-white'
+                              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                             }`}
                         >
                           {quality}
@@ -210,199 +311,106 @@ export default function EpisodePage() {
                       ))}
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Video Frame */}
-              <div className="aspect-video bg-black relative">
-                {loadingVideo ? (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <LoadingSpinner size="lg" text="Loading video..." />
-                  </div>
-                ) : episode.iframe ? (
-                  <iframe
-                    src={episode.iframe}
-                    className="w-full h-full"
-                    allowFullScreen
-                    title={episode.judul}
-                  />
-                ) : videoUrl ? (
-                  <iframe
-                    src={videoUrl}
-                    className="w-full h-full"
-                    allowFullScreen
-                    title={episode.judul}
-                  />
-                ) : mirrors.length > 0 && mirrors[selectedServer] ? (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <FontAwesomeIcon icon={faPlay} className="text-blue-500 mx-auto mb-4 text-[64px]" />
-                      <p className="text-white mb-4">
-                        Server: {mirrors[selectedServer].nama}
-                      </p>
-                      <p className="text-gray-400 text-sm mb-4">
-                        Quality: {selectedQuality}
-                      </p>
-                      <button
-                        onClick={() => loadVideoFromServer(mirrors[selectedServer].content)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                      >
-                        Load Video
-                      </button>
+                  {videoUrl && (
+                    <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400 text-sm">
+                      <FontAwesomeIcon icon={faCircleCheck} className="w-4 h-4" />
+                      <span>Video aktif</span>
                     </div>
-                  </div>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <FontAwesomeIcon icon={faDesktop} className="text-gray-500 mx-auto mb-4 text-[64px]" />
-                      <p className="text-gray-400">No video source available</p>
+                  )}
+                </div>
+
+                {/* Server Selector */}
+                {mirrors.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <FontAwesomeIcon icon={faServer} className="text-gray-500 w-4 h-4" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Server ({mirrors.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {mirrors.map((mirror, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedServer(index)}
+                          className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${selectedServer === index
+                              ? 'bg-purple-600 text-white border-purple-600'
+                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500'
+                            }`}
+                        >
+                          {mirror.nama}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}
               </div>
+            </div>
 
-              {/* Server Selector and Episode Navigation */}
-              {mirrors.length > 0 && (
-                <div className="bg-gray-800 p-4 border-t border-gray-700">
-                  <div className="flex flex-wrap justify-between items-center mb-3">
-                    <h3 className="text-white font-medium">Available Servers ({selectedQuality})</h3>
-
-                    {/* Episode Navigation (Next to Servers) */}
-                    <div className="flex items-center gap-2">
-                      {previousEpisodeSlug ? (
-                        <Link
-                          to={`/episode/${previousEpisodeSlug}`}
-                          className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
-                        >
-                          <FontAwesomeIcon icon={faChevronLeft} className="text-[18px]" />
-                          Previous
-                        </Link>
-                      ) : (
-                        <button
-                          disabled
-                          className="inline-flex items-center gap-1 bg-gray-700 text-gray-400 px-3 py-2 rounded-lg cursor-not-allowed"
-                        >
-                          <FontAwesomeIcon icon={faChevronLeft} className="text-[18px]" />
-                          Previous
-                        </button>
-                      )}
-
-                      {nextEpisodeSlug ? (
-                        <Link
-                          to={`/episode/${nextEpisodeSlug}`}
-                          className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg transition-colors"
-                        >
-                          Next
-                          <FontAwesomeIcon icon={faChevronRight} className="text-[18px]" />
-                        </Link>
-                      ) : (
-                        <button
-                          disabled
-                          className="inline-flex items-center gap-1 bg-gray-700 text-gray-400 px-3 py-2 rounded-lg cursor-not-allowed"
-                        >
-                          Next
-                          <FontAwesomeIcon icon={faChevronRight} className="text-[18px]" />
-                        </button>
-                      )}
-                    </div>
+            {/* Episode Navigation Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              {previousEpisodeSlug ? (
+                <Link
+                  to={`/episode/${previousEpisodeSlug}`}
+                  className="group p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-purple-400 dark:hover:border-purple-600 flex items-center gap-3"
+                >
+                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50">
+                    <FontAwesomeIcon icon={faChevronLeft} />
                   </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {mirrors.map((mirror, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedServer(index)}
-                        className={`px-4 py-2 rounded text-sm font-medium transition-colors ${selectedServer === index
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                          }`}
-                      >
-                        {mirror.nama}
-                      </button>
-                    ))}
+                  <div className="min-w-0">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Sebelumnya</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">Episode {currentEpisodeNumber - 1}</p>
                   </div>
+                </Link>
+              ) : (
+                <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 flex items-center gap-3 opacity-50">
+                  <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-400">
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Sebelumnya</p>
+                    <p className="text-sm font-medium text-gray-400">Tidak ada</p>
+                  </div>
+                </div>
+              )}
 
-                  {/* Status indicator */}
-                  <div className="mt-3 text-sm text-gray-400">
-                    Current: {mirrors[selectedServer]?.nama} - {selectedQuality}
-                    {videoUrl && <span className="text-green-400 ml-2">✓ Video loaded</span>}
+              {nextEpisodeSlug ? (
+                <Link
+                  to={`/episode/${nextEpisodeSlug}`}
+                  className="group p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-purple-400 dark:hover:border-purple-600 flex items-center justify-end gap-3 text-right"
+                >
+                  <div className="min-w-0">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Selanjutnya</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">Episode {currentEpisodeNumber + 1}</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50">
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </div>
+                </Link>
+              ) : (
+                <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800 flex items-center justify-end gap-3 text-right opacity-50">
+                  <div>
+                    <p className="text-xs text-gray-400">Selanjutnya</p>
+                    <p className="text-sm font-medium text-gray-400">Tidak ada</p>
+                  </div>
+                  <div className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-400">
+                    <FontAwesomeIcon icon={faChevronRight} />
                   </div>
                 </div>
               )}
             </div>
-
-            {/* Video Info */}
-            <div className="bg-gray-900 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">Episode Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <FontAwesomeIcon icon={faTv} className="text-blue-500 mx-auto mb-2 text-[32px]" />
-                  <h3 className="text-white font-medium">HD Quality</h3>
-                  <p className="text-gray-400 text-sm">Multiple resolutions available</p>
-                </div>
-                <div className="text-center">
-                  <FontAwesomeIcon icon={faMobile} className="text-green-500 mx-auto mb-2 text-[32px]" />
-                  <h3 className="text-white font-medium">Mobile Friendly</h3>
-                  <p className="text-gray-400 text-sm">Optimized for all devices</p>
-                </div>
-                <div className="text-center">
-                  <FontAwesomeIcon icon={faDownload} className="text-purple-500 mx-auto mb-2 text-[32px]" />
-                  <h3 className="text-white font-medium">Download Available</h3>
-                  <p className="text-gray-400 text-sm">Multiple download options</p>
-                </div>
-              </div>
-
-              {/* Episode Navigation (Bottom) */}
-              <div className="mt-8 flex justify-center gap-4">
-                {previousEpisodeSlug ? (
-                  <Link
-                    to={`/episode/${previousEpisodeSlug}`}
-                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                  >
-                    <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
-                    Previous Episode
-                  </Link>
-                ) : (
-                  <button
-                    disabled
-                    className="inline-flex items-center gap-2 bg-gray-700 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed"
-                  >
-                    <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
-                    Previous Episode
-                  </button>
-                )}
-
-                {nextEpisodeSlug ? (
-                  <Link
-                    to={`/episode/${nextEpisodeSlug}`}
-                    className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Next Episode
-                    <FontAwesomeIcon icon={faChevronRight} className="text-[20px]" />
-                  </Link>
-                ) : (
-                  <button
-                    disabled
-                    className="inline-flex items-center gap-2 bg-gray-700 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed"
-                  >
-                    Next Episode
-                    <FontAwesomeIcon icon={faChevronRight} className="text-[20px]" />
-                  </button>
-                )}
-              </div>
-            </div>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-4">
             {/* Download Section */}
-            <div className="bg-gray-900 rounded-lg p-6 mb-6">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <FontAwesomeIcon icon={faDownload} className="text-green-500" />
-                Download Links
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
+              <h3 className="font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-green-100 dark:bg-green-900/30">
+                  <FontAwesomeIcon icon={faDownload} className="text-green-600 dark:text-green-400 w-4 h-4" />
+                </div>
+                Download {selectedQuality}
               </h3>
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {downloads.length > 0 ? (
                   downloads.map((download, index) => (
                     <a
@@ -410,41 +418,45 @@ export default function EpisodePage() {
                       href={download.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block bg-green-600 hover:bg-green-700 text-white text-center py-3 px-4 rounded-lg transition-colors font-medium"
+                      className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/20 border border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600 group"
                     >
-                      {download.nama} ({selectedQuality})
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-green-600 dark:group-hover:text-green-400">{download.nama}</span>
+                      <FontAwesomeIcon icon={faDownload} className="text-gray-400 group-hover:text-green-500 w-4 h-4" />
                     </a>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-center py-4">
-                    No download links available for {selectedQuality}
+                  <p className="text-gray-500 dark:text-gray-400 text-sm text-center py-4">
+                    Tidak ada link download untuk {selectedQuality}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* Quality Info */}
-            <div className="bg-gray-900 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Quality Information</h3>
+            {/* Info Cards */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
+              <h3 className="font-bold text-gray-800 dark:text-white mb-4">Informasi</h3>
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">360p</span>
-                  <span className="text-white">Mobile</span>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30">
+                  <FontAwesomeIcon icon={faTv} className="text-blue-500 w-5 h-5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Kualitas HD</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">360p, 480p, 720p</p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">480p</span>
-                  <span className="text-white">Standard</span>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800/30">
+                  <FontAwesomeIcon icon={faMobile} className="text-green-500 w-5 h-5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Mobile Friendly</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Semua perangkat</p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">720p</span>
-                  <span className="text-yellow-500 font-semibold">HD</span>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30">
+                  <FontAwesomeIcon icon={faServer} className="text-purple-500 w-5 h-5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white">Multi Server</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{mirrors.length} server tersedia</p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="mt-4 p-3 bg-blue-900/30 rounded-lg border border-blue-700">
-                <p className="text-blue-300 text-sm">
-                  💡 Tip: Use 720p for the best viewing experience on larger screens.
-                </p>
               </div>
             </div>
           </div>

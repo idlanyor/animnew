@@ -5,9 +5,7 @@ export interface BookmarkItem {
   id: string; // slug
   type: 'anime' | 'movie';
   title: string;
-  poster: string;
   addedAt: number; // timestamp
-  // Store additional info based on type
   data: AnimeItem | MovieItem;
 }
 
@@ -50,7 +48,6 @@ export const addBookmark = (item: AnimeItem | MovieItem, type: 'anime' | 'movie'
       id: slug,
       type,
       title: type === 'anime' ? (item as AnimeItem).judul : (item as MovieItem).title,
-      poster: type === 'anime' ? (item as AnimeItem).gambar : (item as MovieItem).poster,
       addedAt: Date.now(),
       data: item
     };

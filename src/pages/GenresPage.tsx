@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { getGenres, getAnimeByGenre, Genre, AnimeItem, OngoingPagination } from '@/lib/api';
 import AnimeCard from '@/components/AnimeCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTag, faFilter, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faTag, faChevronLeft, faChevronRight, faLayerGroup, faFire } from '@fortawesome/free-solid-svg-icons';
 
 export default function GenresPage() {
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -22,7 +21,7 @@ export default function GenresPage() {
         const data = await getGenres();
         setGenres(data);
       } catch (err) {
-        setError('Failed to load genres');
+        setError('Gagal memuat genre');
         console.error('Error fetching genres:', err);
       } finally {
         setLoading(false);
@@ -40,7 +39,7 @@ export default function GenresPage() {
       setPagination(paginationData);
       setSelectedGenre(genreSlug);
     } catch (err) {
-      setError(`Failed to load anime for genre: ${genreSlug}`);
+      setError(`Gagal memuat anime untuk genre: ${genreSlug}`);
       console.error('Error fetching anime by genre:', err);
     } finally {
       setLoadingAnime(false);
@@ -56,37 +55,38 @@ export default function GenresPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <LoadingSpinner size="lg" text="Loading genres..." />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
+        <LoadingSpinner size="lg" text="Memuat genre..." />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       {/* Header */}
-      <div className="bg-gradient-to-r from-yellow-500 via-amber-500 to-blue-600 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <FontAwesomeIcon icon={faTag} className="text-yellow-300 text-[48px]" />
-              <h1 className="text-4xl md:text-5xl font-bold text-white">
-                Anime Genres
-              </h1>
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center gap-4 mb-2">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/20">
+              <FontAwesomeIcon icon={faTag} className="text-white text-xl" />
             </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Explore anime by your favorite genres. From action-packed adventures to heartwarming romances, 
-              find the perfect anime that matches your mood.
-            </p>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">
+                Genre Anime
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Jelajahi anime berdasarkan genre favoritmu
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         {error ? (
-          <div className="text-center py-12">
-            <p className="text-red-500 text-xl mb-4">{error}</p>
+          <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <p className="text-red-500 mb-4">{error}</p>
             <button 
               onClick={() => {
                 setError(null);
@@ -95,29 +95,34 @@ export default function GenresPage() {
                   setGenres(data);
                   setLoading(false);
                 }).catch(() => {
-                  setError('Failed to load genres');
+                  setError('Gagal memuat genre');
                   setLoading(false);
                 });
               }}
-              className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white px-6 py-3 rounded-lg font-semibold transition-all border border-yellow-400/30 shadow-lg shadow-yellow-500/20"
+              className="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-full font-medium"
             >
-              Try Again
+              Coba Lagi
             </button>
           </div>
         ) : (
-          <div className="space-y-12">
+          <div className="space-y-6">
             {/* Genre Buttons */}
-            <div className="bg-gray-900 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <FontAwesomeIcon icon={faFilter} className="text-yellow-400" />
-                Select a Genre
-              </h2>
-              <div className="flex flex-wrap gap-3">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <FontAwesomeIcon icon={faLayerGroup} className="text-amber-500 w-5 h-5" />
+                <h2 className="font-bold text-gray-800 dark:text-white">Pilih Genre</h2>
+                <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">{genres.length} genre</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
                 {genres.map((genre) => (
                   <button
                     key={genre.slug}
                     onClick={() => fetchAnimeByGenre(genre.slug, 1)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedGenre === genre.slug ? 'bg-gradient-to-r from-yellow-500 to-amber-600 text-white border border-yellow-400/30 shadow-lg shadow-yellow-500/20' : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700'}`}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                      selectedGenre === genre.slug 
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-amber-500 shadow-md shadow-amber-500/20' 
+                        : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-amber-400 dark:hover:border-amber-500'
+                    }`}
                   >
                     {genre.judul}
                   </button>
@@ -127,63 +132,79 @@ export default function GenresPage() {
 
             {/* Anime List */}
             {selectedGenre && (
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">
-                    {genres.find(g => g.slug === selectedGenre)?.judul} Anime
-                  </h2>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FontAwesomeIcon icon={faFire} className="text-orange-500 w-5 h-5" />
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-white">
+                      {genres.find(g => g.slug === selectedGenre)?.judul}
+                    </h2>
+                    {pagination && (
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        ({pagination.current_page}/{pagination.last_visible_page} halaman)
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {loadingAnime ? (
-                  <div className="flex justify-center py-12">
-                    <LoadingSpinner size="md" text="Loading anime..." />
+                  <div className="flex justify-center py-12 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                    <LoadingSpinner size="md" text="Memuat anime..." />
                   </div>
                 ) : animeList.length > 0 ? (
                   <>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                       {animeList.map((anime) => (
                         <AnimeCard key={anime.slug} anime={anime} />
                       ))}
                     </div>
 
-                    {/* Pagination Controls */}
+                    {/* Pagination */}
                     {pagination && (pagination.has_next_page || pagination.has_previous_page) && (
-                      <div className="flex items-center justify-center gap-4 mt-12">
-                        {/* Previous Button */}
+                      <div className="flex items-center justify-center gap-3 pt-6">
                         <button
                           onClick={() => pagination.previous_page && goToPage(pagination.previous_page)}
                           disabled={!pagination.has_previous_page || loadingAnime}
-                          className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-yellow-400/30 shadow-lg shadow-yellow-500/20"
+                          className="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-amber-400 dark:hover:border-amber-500 disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          <FontAwesomeIcon icon={faChevronLeft} className="text-[20px]" />
-                          Previous
+                          <FontAwesomeIcon icon={faChevronLeft} className="w-4 h-4" />
                         </button>
 
-                        {/* Page Info */}
-                        <div className="bg-gray-800 px-6 py-3 rounded-lg border border-yellow-400/30">
-                          <span className="text-white font-bold">
-                            Page <span className="text-yellow-400">{pagination.current_page}</span> of{' '}
-                            <span className="text-yellow-400">{pagination.last_visible_page}</span>
+                        <div className="px-4 py-2 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                          <span className="text-sm font-medium text-gray-800 dark:text-white">
+                            <span className="text-amber-600 dark:text-amber-400">{pagination.current_page}</span>
+                            <span className="text-gray-400 mx-1">/</span>
+                            <span>{pagination.last_visible_page}</span>
                           </span>
                         </div>
 
-                        {/* Next Button */}
                         <button
                           onClick={() => pagination.next_page && goToPage(pagination.next_page)}
                           disabled={!pagination.has_next_page || loadingAnime}
-                          className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 disabled:from-gray-600 disabled:to-gray-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 border border-yellow-400/30 shadow-lg shadow-yellow-500/20"
+                          className="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-amber-400 dark:hover:border-amber-500 disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          Next
-                          <FontAwesomeIcon icon={faChevronRight} className="text-[20px]" />
+                          <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4" />
                         </button>
                       </div>
                     )}
                   </>
                 ) : (
-                  <div className="text-center py-12 bg-gray-900 rounded-lg">
-                    <p className="text-gray-400">No anime found for this genre</p>
+                  <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                    <FontAwesomeIcon icon={faTag} className="text-gray-400 text-4xl mb-3" />
+                    <p className="text-gray-500 dark:text-gray-400">Tidak ada anime untuk genre ini</p>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Initial State */}
+            {!selectedGenre && (
+              <div className="text-center py-16 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <FontAwesomeIcon icon={faTag} className="text-amber-500 text-2xl" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 font-medium">Pilih genre untuk melihat daftar anime</p>
+                <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Klik salah satu genre di atas</p>
               </div>
             )}
           </div>

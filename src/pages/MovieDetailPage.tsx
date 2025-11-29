@@ -1,13 +1,11 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { Link,useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom';
 import { getMovieDetail, MovieDetail } from '@/lib/api';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import SEOHead from '@/components/SEOHead';
 import { generateMovieSEOData } from '@/lib/seo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faCalendar, faClock, faStar, faBuilding, faTag } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faCalendar, faClock, faStar, faBuilding, faArrowLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -24,7 +22,7 @@ export default function MovieDetailPage() {
         const data = await getMovieDetail(slug);
         setMovie(data);
       } catch (err) {
-        setError('Failed to load movie details');
+        setError('Gagal memuat detail movie');
         console.error('Error fetching movie detail:', err);
       } finally {
         setLoading(false);
@@ -36,12 +34,11 @@ export default function MovieDetailPage() {
     }
   }, [slug]);
 
-  // Generate SEO data when movie data is available
   const seoData = movie ? generateMovieSEOData({
     title: movie.data.title,
     synopsis: movie.data.synopsis.paragraphs.join(' '),
     image: movie.data.poster,
-    slug: slug, // Use slug from URL params
+    slug: slug,
     releaseYear: movie.data.aired,
     score: movie.data.score.value,
     genres: movie.data.genreList.map(g => g.title),
@@ -49,31 +46,22 @@ export default function MovieDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 via-gray-900 to-black">
-        <div className="glass-card px-8 py-6 rounded-2xl border border-white/10">
-          <LoadingSpinner size="lg" text="Loading movie details..." />
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
+        <LoadingSpinner size="lg" text="Memuat detail movie..." />
       </div>
     );
   }
 
   if (error || !movie) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 via-gray-900 to-black">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black">
         <div className="text-center">
-          <div className="glass-card px-8 py-6 rounded-2xl border border-white/10 mb-6 inline-block">
-            <p className="text-red-500 text-xl mb-4">{error || 'Movie not found'}</p>
-          </div>
+          <p className="text-red-500 text-xl mb-4">{error || 'Movie tidak ditemukan'}</p>
           <Link
             to="/movie"
-            className="inline-block group relative overflow-hidden"
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur"></div>
-            <div className="relative glass-card px-8 py-3 rounded-xl border border-white/20 group-hover:border-yellow-400/50 transition-all duration-300">
-              <span className="text-white font-medium bg-gradient-to-r from-white to-yellow-200 bg-clip-text group-hover:text-transparent transition-all">
-                Back to Movies
-              </span>
-            </div>
+            Kembali ke Movie
           </Link>
         </div>
       </div>
@@ -83,329 +71,255 @@ export default function MovieDetailPage() {
   return (
     <>
       {seoData && <SEOHead {...seoData} />}
-      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black">
-      {/* Enhanced Hero Section with Glassmorphism */}
-      <div className="relative overflow-hidden">
-        {/* Background Image with Blur */}
-        <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px]">
-          <img
-            src={movie.data.poster || `https://placehold.co/800x600/1a1a1a/ffffff?text=${encodeURIComponent(movie.data.title)}`}
-            alt={movie.data.title}
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Multi-layer overlay for better glass effect */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/30"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black"></div>
-          <div className="absolute inset-0 backdrop-blur-[2px]"></div>
-        </div>
-
-        {/* Glass Content Container */}
-        <div className="absolute bottom-0 left-0 right-0 z-20 p-4 sm:p-6 md:p-8 lg:p-12">
-          <div className="max-w-7xl mx-auto">
-            {/* Title with Glass Background */}
-            <div className="relative inline-block mb-4 md:mb-6 max-w-full">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-blue-500/20 to-purple-500/20 blur-2xl"></div>
-              <div className="relative glass-card px-6 py-4 rounded-2xl border border-white/10 backdrop-blur-xl">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 bg-gradient-to-r from-white via-yellow-100 to-blue-100 bg-clip-text text-transparent leading-tight">
-                  {movie.data.title}
-                </h1>
-                {movie.data.english && movie.data.english !== movie.data.title && (
-                  <p className="text-base md:text-xl text-gray-300 mb-2">{movie.data.english}</p>
-                )}
-                {movie.data.japanese && (
-                  <p className="text-sm md:text-base text-gray-400">{movie.data.japanese}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Enhanced Badges */}
-            <div className="flex flex-wrap items-center gap-3">
-              {movie.data.score && (
-                <div className="group relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-600 blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                  <div className="relative glass-badge backdrop-blur-md bg-gradient-to-r from-yellow-500/90 to-amber-600/90 border border-yellow-400/30 px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
-                    <FontAwesomeIcon icon={faStar} className="text-white text-[18px]" />
-                    <span className="font-bold text-white text-sm">{movie.data.score.value}</span>
-                    <span className="text-xs text-yellow-100 hidden sm:inline">({movie.data.score.users} users)</span>
-                  </div>
-                </div>
-              )}
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-600 blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                <div className="relative glass-badge backdrop-blur-md bg-gradient-to-r from-green-500/90 to-emerald-600/90 border border-green-400/30 px-4 py-2 rounded-xl shadow-lg">
-                  <span className="font-semibold text-white text-sm">{movie.data.status}</span>
-                </div>
-              </div>
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-600 blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                <div className="relative glass-badge backdrop-blur-md bg-gradient-to-r from-blue-500/90 to-cyan-600/90 border border-blue-400/30 px-4 py-2 rounded-xl shadow-lg">
-                  <span className="font-semibold text-white text-sm">{movie.data.type}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Content Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Enhanced Movie Info Card */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative glass-card rounded-2xl p-6 md:p-8 border border-white/10">
-                {/* Section Title */}
-                <div className="mb-6">
-                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent">
-                    Movie Information
-                  </h2>
-                  <div className="h-1 w-20 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full mt-2"></div>
-                </div>
-
-                {/* Synopsis */}
-                {movie.data.synopsis && movie.data.synopsis.paragraphs.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                      <div className="w-1 h-6 bg-gradient-to-b from-cyan-500 to-blue-500 rounded-full"></div>
-                      Synopsis
-                    </h3>
-                    <div className="space-y-3">
-                      {movie.data.synopsis.paragraphs.map((paragraph, index) => (
-                        <p key={index} className="text-gray-300 leading-relaxed text-justify">
-                          {paragraph}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Movie Details Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                  {movie.data.duration && (
-                    <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-yellow-500/30 transition-all duration-300 group/item">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/20 to-amber-600/20 group-hover/item:from-yellow-500/30 group-hover/item:to-amber-600/30 transition-all">
-                          <FontAwesomeIcon icon={faClock} className="text-yellow-400 text-[20px]" />
-                        </div>
-                        <div>
-                          <span className="text-gray-400 text-xs font-medium">Duration</span>
-                          <p className="text-white font-semibold">{movie.data.duration}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {movie.data.aired && (
-                    <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-blue-500/30 transition-all duration-300 group/item">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-cyan-600/20 group-hover/item:from-blue-500/30 group-hover/item:to-cyan-600/30 transition-all">
-                          <FontAwesomeIcon icon={faCalendar} className="text-blue-400 text-[20px]" />
-                        </div>
-                        <div>
-                          <span className="text-gray-400 text-xs font-medium">Aired</span>
-                          <p className="text-white font-semibold">{movie.data.aired}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {movie.data.studios && (
-                    <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300 group/item">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 group-hover/item:from-cyan-500/30 group-hover/item:to-blue-600/30 transition-all">
-                          <FontAwesomeIcon icon={faBuilding} className="text-cyan-400 text-[20px]" />
-                        </div>
-                        <div>
-                          <span className="text-gray-400 text-xs font-medium">Studios</span>
-                          <p className="text-white font-semibold text-sm">{movie.data.studios}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {movie.data.source && (
-                    <div className="glass-card p-4 rounded-xl border border-white/10 hover:border-purple-500/30 transition-all duration-300 group/item">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-600/20 group-hover/item:from-purple-500/30 group-hover/item:to-pink-600/30 transition-all">
-                          <FontAwesomeIcon icon={faTag} className="text-purple-400 text-[20px]" />
-                        </div>
-                        <div>
-                          <span className="text-gray-400 text-xs font-medium">Source</span>
-                          <p className="text-white font-semibold">{movie.data.source}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Genres */}
-                {movie.data.genreList && movie.data.genreList.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                      <div className="w-1 h-6 bg-gradient-to-b from-cyan-500 to-blue-500 rounded-full"></div>
-                      Genres
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {movie.data.genreList.map((genre) => (
-                        <span
-                          key={genre.genreId}
-                          className="glass-badge backdrop-blur-sm bg-gradient-to-r from-gray-800/80 to-gray-700/80 border border-white/10 hover:border-cyan-400/30 text-gray-200 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105"
-                        >
-                          {genre.title}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Enhanced Episodes Section */}
-            {movie.data.episodeList && movie.data.episodeList.length > 0 && (
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative glass-card rounded-2xl p-6 md:p-8 border border-white/10">
-                  <div className="mb-6">
-                    <h3 className="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20">
-                        <FontAwesomeIcon icon={faPlay} className="text-blue-400 text-[24px]" />
-                      </div>
-                      <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                        Episodes
-                      </span>
-                      <span className="glass-badge backdrop-blur-sm bg-blue-500/20 border border-blue-400/30 px-3 py-1 rounded-lg text-sm text-blue-300">
-                        {movie.data.episodeList.length}
-                      </span>
-                    </h3>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    {movie.data.episodeList.map((episode) => (
-                      <Link
-                        key={episode.episodeId}
-                        to={`/movie/watch/${episode.episodeId}`}
-                        className="group/ep relative overflow-hidden"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-500/30 opacity-0 group-hover/ep:opacity-100 transition-opacity duration-300 blur"></div>
-                        <div className="relative glass-card p-3 rounded-xl border border-white/10 group-hover/ep:border-blue-400/50 transition-all duration-300 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <FontAwesomeIcon icon={faPlay} className="text-gray-400 group-hover/ep:text-blue-400 transition-colors text-[16px]" />
-                            <span className="text-white font-medium text-sm group-hover/ep:text-blue-300">EP {episode.title}</span>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+      <div className="min-h-screen bg-gray-50 dark:bg-black">
+        {/* Hero Section with Backdrop */}
+        <div className="relative min-h-[450px] md:min-h-[400px]">
+          {/* Backdrop Image */}
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              src={movie.data.poster || `https://placehold.co/800x600/1a1a1a/ffffff?text=${encodeURIComponent(movie.data.title)}`}
+              alt={movie.data.title}
+              className="w-full h-full object-cover object-center blur-sm scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-gray-50 dark:to-black"></div>
           </div>
 
-          {/* Enhanced Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Poster & Watch Section */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-blue-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative glass-card rounded-2xl p-6 border border-white/10">
-                {/* Enhanced Poster */}
-                <div className="aspect-[3/4] relative rounded-xl overflow-hidden mb-6 group/poster">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+          {/* Content */}
+          <div className="relative max-w-7xl mx-auto px-4 pt-6 pb-8">
+            {/* Back Button */}
+            <Link
+              to="/movie"
+              className="inline-flex items-center gap-2 text-white bg-black/30 hover:bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full mb-6 text-sm z-10"
+            >
+              <FontAwesomeIcon icon={faArrowLeft} />
+              <span>Kembali</span>
+            </Link>
+
+            {/* Main Info Card */}
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+              <div className="flex-shrink-0 mx-auto md:mx-0 z-10">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-50"></div>
                   <img
                     src={movie.data.poster || `https://placehold.co/300x400/1a1a1a/ffffff?text=${encodeURIComponent(movie.data.title)}`}
                     alt={movie.data.title}
-                    className="w-full h-full object-cover group-hover/poster:scale-105 transition-transform duration-500"
+                    className="relative w-40 sm:w-48 md:w-52 rounded-xl shadow-2xl"
                   />
-                  <div className="absolute inset-0 border-2 border-white/10 rounded-xl group-hover/poster:border-white/20 transition-colors"></div>
+                </div>
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 text-center md:text-left z-10">
+                <h1 className="text-2xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg">
+                  {movie.data.title}
+                </h1>
+                {movie.data.japanese && (
+                  <p className="text-white/70 mb-4 text-sm md:text-base">{movie.data.japanese}</p>
+                )}
+
+                {/* Badges */}
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-5">
+                  {movie.data.score && (
+                    <div className="flex items-center gap-1.5 bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-semibold">
+                      <FontAwesomeIcon icon={faStar} className="text-xs" />
+                      <span>{movie.data.score.value}</span>
+                    </div>
+                  )}
+                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {movie.data.status}
+                  </span>
+                  <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {movie.data.type}
+                  </span>
+                  {movie.data.duration && (
+                    <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                      {movie.data.duration}
+                    </span>
+                  )}
                 </div>
 
-                {/* Enhanced Watch Button */}
-                {movie.data.episodeList && movie.data.episodeList.length > 0 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                      <div className="w-1 h-6 bg-gradient-to-b from-yellow-500 to-blue-500 rounded-full"></div>
-                      Watch Movie
-                    </h3>
+                {/* Quick Info */}
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-white/80 text-sm mb-6">
+                  {movie.data.studios && (
+                    <div className="flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faBuilding} className="text-purple-400" />
+                      <span>{movie.data.studios}</span>
+                    </div>
+                  )}
+                  {movie.data.aired && (
+                    <div className="flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faCalendar} className="text-blue-400" />
+                      <span>{movie.data.aired}</span>
+                    </div>
+                  )}
+                  {movie.data.duration && (
+                    <div className="flex items-center gap-1.5">
+                      <FontAwesomeIcon icon={faClock} className="text-green-400" />
+                      <span>{movie.data.duration}</span>
+                    </div>
+                  )}
+                </div>
 
+                {/* Action Button */}
+                {movie.data.episodeList && movie.data.episodeList.length > 0 && (
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                     <Link
                       to={`/movie/watch/${movie.data.episodeList[0].episodeId}`}
-                      className="block group/watch relative overflow-hidden"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-full shadow-lg shadow-purple-500/30"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 via-blue-500 to-purple-600 opacity-100 group-hover/watch:opacity-100 transition-opacity duration-300 animate-gradient"></div>
-                      <div className="relative backdrop-blur-sm bg-gradient-to-r from-yellow-500/90 via-blue-500/90 to-purple-600/90 border border-yellow-400/30 text-white text-center py-4 rounded-xl transition-all duration-300 font-bold text-lg shadow-2xl group-hover/watch:shadow-yellow-500/50 group-hover/watch:scale-[1.02]">
-                        <div className="flex items-center justify-center gap-3">
-                          <div className="p-2 bg-white/20 rounded-full group-hover/watch:bg-white/30 transition-colors">
-                            <FontAwesomeIcon icon={faPlay} className="text-[20px]" />
-                          </div>
-                          <span>Watch Now</span>
-                        </div>
-                      </div>
+                      <FontAwesomeIcon icon={faPlay} />
+                      <span>Tonton Sekarang</span>
                     </Link>
                   </div>
                 )}
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Enhanced Quick Stats */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative glass-card rounded-2xl p-6 border border-white/10">
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent">
-                    Quick Stats
-                  </h3>
-                  <div className="h-1 w-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full mt-2"></div>
+        {/* Content Section */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Synopsis */}
+              {movie.data.synopsis && movie.data.synopsis.paragraphs.length > 0 && (
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <span className="w-1 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></span>
+                    Sinopsis
+                  </h2>
+                  <div className="space-y-3">
+                    {movie.data.synopsis.paragraphs.map((paragraph, index) => (
+                      <p key={index} className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
                 </div>
+              )}
 
-                <div className="space-y-4">
-                  <div className="glass-card p-3 rounded-xl border border-white/5 flex justify-between items-center group/stat hover:border-green-500/30 transition-all">
-                    <span className="text-gray-400 text-sm font-medium">Status</span>
-                    <span className="text-white font-semibold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                      {movie.data.status}
+              {/* Episodes List */}
+              {movie.data.episodeList && movie.data.episodeList.length > 0 && (
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <div className="flex items-center justify-between mb-5">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                      <span className="w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></span>
+                      Daftar Episode
+                    </h2>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full">
+                      {movie.data.episodeList.length} Episode
                     </span>
                   </div>
-
-                  <div className="glass-card p-3 rounded-xl border border-white/5 flex justify-between items-center group/stat hover:border-blue-500/30 transition-all">
-                    <span className="text-gray-400 text-sm font-medium">Type</span>
-                    <span className="text-white font-semibold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                      {movie.data.type}
-                    </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2">
+                    {movie.data.episodeList.map((episode) => (
+                      <Link
+                        key={episode.episodeId}
+                        to={`/movie/watch/${episode.episodeId}`}
+                        className="group flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-purple-50 dark:hover:bg-purple-900/20 border border-gray-100 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                          <FontAwesomeIcon icon={faPlay} className="text-white text-sm" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-gray-800 dark:text-white font-medium text-sm group-hover:text-purple-600 dark:group-hover:text-purple-400 truncate">
+                            Episode {episode.title}
+                          </h3>
+                        </div>
+                        <FontAwesomeIcon icon={faChevronRight} className="text-gray-400 group-hover:text-purple-500 text-sm" />
+                      </Link>
+                    ))}
                   </div>
+                </div>
+              )}
+            </div>
 
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Info Card */}
+              <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
+                <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <span className="w-1 h-5 bg-gradient-to-b from-green-500 to-emerald-500 rounded-full"></span>
+                  Informasi
+                </h2>
+                <div className="space-y-3">
+                  {movie.data.type && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Tipe</span>
+                      <span className="text-gray-800 dark:text-white font-medium text-sm">{movie.data.type}</span>
+                    </div>
+                  )}
+                  {movie.data.status && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Status</span>
+                      <span className="text-gray-800 dark:text-white font-medium text-sm">{movie.data.status}</span>
+                    </div>
+                  )}
+                  {movie.data.aired && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Rilis</span>
+                      <span className="text-gray-800 dark:text-white font-medium text-sm">{movie.data.aired}</span>
+                    </div>
+                  )}
+                  {movie.data.studios && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Studio</span>
+                      <span className="text-gray-800 dark:text-white font-medium text-sm">{movie.data.studios}</span>
+                    </div>
+                  )}
+                  {movie.data.duration && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Durasi</span>
+                      <span className="text-gray-800 dark:text-white font-medium text-sm">{movie.data.duration}</span>
+                    </div>
+                  )}
                   {movie.data.score && (
-                    <div className="glass-card p-3 rounded-xl border border-white/5 flex justify-between items-center group/stat hover:border-yellow-500/30 transition-all">
-                      <span className="text-gray-400 text-sm font-medium">Score</span>
-                      <span className="text-yellow-400 font-bold flex items-center gap-1.5 text-lg">
-                        <FontAwesomeIcon icon={faStar} className="text-[16px]" />
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Skor</span>
+                      <span className="text-yellow-600 dark:text-yellow-400 font-bold text-sm flex items-center gap-1">
+                        <FontAwesomeIcon icon={faStar} className="text-xs" />
                         {movie.data.score.value}
                       </span>
                     </div>
                   )}
-
-                  <div className="glass-card p-3 rounded-xl border border-white/5 flex justify-between items-center group/stat hover:border-purple-500/30 transition-all">
-                    <span className="text-gray-400 text-sm font-medium">Episodes</span>
-                    <span className="text-white font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                      {movie.data.episodes}
-                    </span>
-                  </div>
-
-                  {movie.data.season && (
-                    <div className="glass-card p-3 rounded-xl border border-white/5 flex justify-between items-center group/stat hover:border-cyan-500/30 transition-all">
-                      <span className="text-gray-400 text-sm font-medium">Season</span>
-                      <span className="text-white font-semibold">{movie.data.season}</span>
+                  {movie.data.source && (
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Sumber</span>
+                      <span className="text-gray-800 dark:text-white font-medium text-sm">{movie.data.source}</span>
                     </div>
                   )}
-
                   {movie.data.producers && (
-                    <div className="glass-card p-3 rounded-xl border border-white/5 flex justify-between items-center group/stat hover:border-blue-500/30 transition-all">
-                      <span className="text-gray-400 text-sm font-medium">Producers</span>
-                      <span className="text-white text-right text-sm font-medium">{movie.data.producers}</span>
+                    <div className="flex items-center justify-between py-2">
+                      <span className="text-gray-500 dark:text-gray-400 text-sm">Produser</span>
+                      <span className="text-gray-800 dark:text-white font-medium text-sm text-right max-w-[150px] truncate">{movie.data.producers}</span>
                     </div>
                   )}
                 </div>
               </div>
+
+              {/* Genres */}
+              {movie.data.genreList && movie.data.genreList.length > 0 && (
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-gradient-to-b from-pink-500 to-rose-500 rounded-full"></span>
+                    Genre
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {movie.data.genreList.map((genre) => (
+                      <Link
+                        key={genre.genreId}
+                        to={`/genre/${genre.genreId}`}
+                        className="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 rounded-full text-sm border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700"
+                      >
+                        {genre.title}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
       </div>
     </>
   );

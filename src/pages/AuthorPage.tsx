@@ -69,96 +69,98 @@ export default function AuthorPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
         <LoadingSpinner size="lg" text="Loading author information..." />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-white mb-8 text-center">Meet Our Team</h1>
+    <div className="min-h-screen bg-gray-100 dark:bg-black">
+      <div className="container mx-auto px-4 py-12">
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8 text-center">Meet Our Team</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        {authors.map((author) => (
-          <div key={author.name} className="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-blue-900/20 transition-all duration-300">
-            <div className="p-6">
-              <div className="flex items-center mb-6">
-                <div className="relative w-20 h-20 mr-4">
-                  <img
-                    src={author.avatar}
-                    alt={author.name}
-                    className="rounded-full border-2 border-blue-500 object-cover"
-                  />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {authors.map((author) => (
+            <div key={author.name} className="bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-md dark:shadow-lg hover:shadow-xl dark:hover:shadow-blue-900/20 border border-gray-200 dark:border-gray-800">
+              <div className="p-6">
+                <div className="flex items-center mb-6">
+                  <div className="relative w-20 h-20 mr-4">
+                    <img
+                      src={author.avatar}
+                      alt={author.name}
+                      className="rounded-full border-2 border-blue-500 object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-white">{author.name}</h2>
+                    <p className="text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                      {author.role === 'Author Utama' ? (
+                        <>
+                          <FontAwesomeIcon icon={faCode} className="h-4 w-4" />
+                          {author.role}
+                        </>
+                      ) : (
+                        <>
+                          <FontAwesomeIcon icon={faDatabase} className="h-4 w-4" />
+                          {author.role}
+                        </>
+                      )}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold text-white">{author.name}</h2>
-                  <p className="text-blue-400 flex items-center gap-2">
-                    {author.role === 'Author Utama' ? (
-                      <>
-                        <FontAwesomeIcon icon={faCode} className="h-4 w-4" />
-                        {author.role}
-                      </>
-                    ) : (
-                      <>
-                        <FontAwesomeIcon icon={faDatabase} className="h-4 w-4" />
-                        {author.role}
-                      </>
-                    )}
-                  </p>
+
+                <p className="text-gray-600 dark:text-gray-300 mb-6">{author.description}</p>
+
+                <div className="mb-6">
+                  <h3 className="text-gray-800 dark:text-white font-semibold mb-2 flex items-center gap-2">
+                    <FontAwesomeIcon icon={faCode} className="h-4 w-4" />
+                    Skills:
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {author.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-sm flex items-center gap-1 border border-gray-200 dark:border-gray-700"
+                      >
+                        {skill.toLowerCase().includes('database') ? <FontAwesomeIcon icon={faDatabase} className="h-3 w-3" /> : <FontAwesomeIcon icon={faCode} className="h-3 w-3" />}
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <p className="text-gray-300 mb-6">{author.description}</p>
-
-              <div className="mb-6">
-                <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
-                  <FontAwesomeIcon icon={faCode} className="h-4 w-4" />
-                  Skills:
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {author.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="bg-gray-800 text-blue-400 px-3 py-1 rounded-full text-sm flex items-center gap-1"
-                    >
-                      {skill.toLowerCase().includes('database') ? <FontAwesomeIcon icon={faDatabase} className="h-3 w-3" /> : <FontAwesomeIcon icon={faCode} className="h-3 w-3" />}
-                      {skill}
-                    </span>
-                  ))}
+                <div className="flex justify-center gap-4">
+                  <a
+                    href={author.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700"
+                  >
+                    <FontAwesomeIcon icon={faGithub} className="h-5 w-5" />
+                    GitHub Profile
+                  </a>
+                  <a
+                    href={author.website}
+                    className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700"
+                  >
+                    <FontAwesomeIcon icon={faGlobe} className="h-5 w-5" />
+                    Website
+                  </a>
                 </div>
-              </div>
-
-              <div className="flex justify-center gap-4">
-                <a
-                  href={author.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  <FontAwesomeIcon icon={faGithub} className="h-5 w-5" />
-                  GitHub Profile
-                </a>
-                <a
-                  href={author.website}
-                  className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  <FontAwesomeIcon icon={faGlobe} className="h-5 w-5" />
-                  Website
-                </a>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className="mt-12 text-center text-gray-400">
-        <p className="flex items-center justify-center gap-2">
-          KanataAnimeV2 adalah platform streaming anime yang dikembangkan dengan ❤️ oleh Roy Antidonasi dkk.
-        </p>
-        <p className="mt-2 flex items-center justify-center gap-2">
-          Powered by <a href="https://antidonasi.web.id" className='text-blue-500 font-bold' target="_blank" rel="noopener noreferrer">Antidonasi Team</a>
-        </p>
+        <div className="mt-12 text-center text-gray-600 dark:text-gray-400">
+          <p className="flex items-center justify-center gap-2">
+            KanataAnimeV2 adalah platform streaming anime yang dikembangkan dengan ❤️ oleh Roy Antidonasi dkk.
+          </p>
+          <p className="mt-2 flex items-center justify-center gap-2">
+            Powered by <a href="https://antidonasi.web.id" className='text-blue-600 dark:text-blue-500 font-bold' target="_blank" rel="noopener noreferrer">Antidonasi Team</a>
+          </p>
+        </div>
       </div>
     </div>
   );

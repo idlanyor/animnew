@@ -27,14 +27,16 @@ function AnimeCard({ anime }: AnimeCardProps) {
   return (
     <Link to={`/anime/${anime.slug}`} className="group block">
       <div className="relative overflow-hidden transition-transform duration-300 group-hover:scale-[1.03]">
-        <div className="relative bg-gray-900 overflow-hidden border border-transparent group-hover:border-gray-700 shadow-sm group-hover:shadow-2xl transition-all duration-300">
+        <div className="relative bg-white dark:bg-gray-900 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 group-hover:border-purple-400 dark:group-hover:border-purple-600 shadow-md dark:shadow-sm group-hover:shadow-xl dark:group-hover:shadow-2xl transition-all duration-300">
           {/* Image section */}
           <div className="relative aspect-[3/4] overflow-hidden">
             <img
               src={anime.gambar}
               alt={anime.judul}
               loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+              style={{ contentVisibility: 'auto' }}
             />
 
             {/* Gradient overlay for readable info */}
@@ -70,13 +72,13 @@ function AnimeCard({ anime }: AnimeCardProps) {
             {isOngoing && (
               <>
                 <div className="absolute top-3 left-3 z-20">
-                  <div className="bg-cyan-600/95 text-[11px] px-2.5 py-0.5 rounded-xl font-semibold flex items-center gap-2 shadow-sm animate-pulse">
+                  <div className="bg-purple-600/95 text-[11px] px-2.5 py-0.5 rounded-xl font-semibold flex items-center gap-2 shadow-sm animate-pulse">
                     <FontAwesomeIcon icon={faBolt} className="text-yellow-300 text-[11px]" />
                     <span className="text-white font-bold text-xs">NEW</span>
                   </div>
                 </div>
                 <div className="absolute top-3 right-3 z-20">
-                  <div className="bg-red-600/95 text-[11px] px-2.5 py-0.5 rounded-xl font-semibold flex items-center gap-2 shadow-sm">
+                  <div className="bg-pink-600/95 text-[11px] px-2.5 py-0.5 rounded-xl font-semibold flex items-center gap-2 shadow-sm">
                     <FontAwesomeIcon icon={faCalendar} className="text-[11px]" />
                     <span className="text-white font-bold text-xs">{anime.release_day}</span>
                   </div>
@@ -87,7 +89,7 @@ function AnimeCard({ anime }: AnimeCardProps) {
             {/* Bookmark button */}
             <button
               onClick={handleBookmarkClick}
-              className="absolute bottom-3 right-3 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm border border-white/10 p-2.5 rounded-full transition-transform duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="absolute bottom-3 right-3 z-20 bg-black/50 hover:bg-black/70 backdrop-blur-sm border border-white/10 p-2.5 rounded-full transition-transform duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-purple-400"
               aria-label={bookmarked ? 'Remove from favorites' : 'Add to favorites'}
             >
               <FontAwesomeIcon
@@ -98,10 +100,10 @@ function AnimeCard({ anime }: AnimeCardProps) {
           </div>
 
           {/* Info section - glass effect */}
-          <div className="relative p-3 sm:p-4 bg-gradient-to-t from-black/70 to-black/40 border-t border-gray-800 backdrop-blur-sm">
+          <div className="relative p-3 sm:p-4 bg-white/95 dark:bg-gray-900/95 border-t border-gray-200 dark:border-gray-700 backdrop-blur-sm">
             {/* Title */}
             <h3
-              className="text-white font-semibold text-sm sm:text-base mb-1 line-clamp-2 leading-tight drop-shadow-sm"
+              className="text-gray-800 dark:text-white font-semibold text-sm sm:text-base mb-1 line-clamp-2 leading-tight"
               title={anime.judul}
             >
               {(anime.judul ?? '').length > 10 ? `${anime.judul.slice(0, 15)}...` : anime.judul}
@@ -112,11 +114,11 @@ function AnimeCard({ anime }: AnimeCardProps) {
               {/* Ongoing Anime Info */}
               {isOngoing && (
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-1">
-                  <div className="bg-cyan-700/95 text-[11px] sm:text-xs px-2 py-0.5 inline-flex items-center rounded-full font-medium shadow-inner">
+                  <div className="bg-purple-600 dark:bg-purple-700/95 text-[11px] sm:text-xs px-2 py-0.5 inline-flex items-center rounded-full font-medium shadow-sm">
                     <span className="text-white text-xs">{anime.current_episode?.replace('Episode ', 'Eps ')}</span>
                   </div>
                   {anime.newest_release_date && (
-                    <div className="flex items-center gap-2 text-gray-300 text-[11px] sm:text-sm">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-[11px] sm:text-sm">
                       <FontAwesomeIcon icon={faClock} className="text-[12px]" />
                       <span className="truncate">{anime.newest_release_date}</span>
                     </div>
@@ -128,7 +130,7 @@ function AnimeCard({ anime }: AnimeCardProps) {
               {isComplete && (
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-1">
                   {anime.last_release_date && (
-                    <div className="flex items-center bg-teal-300 hover:bg-teal-400 gap-2 text-black rounded-lg p-2 text-[11px] sm:text-sm">
+                    <div className="flex items-center bg-teal-500 dark:bg-teal-400 hover:bg-teal-600 dark:hover:bg-teal-500 gap-2 text-white dark:text-black rounded-lg p-2 text-[11px] sm:text-sm shadow-sm">
                       <FontAwesomeIcon icon={faClock} className="text-[12px]" />
                       <span className="truncate">Tamat: {anime.last_release_date}</span>
                     </div>
@@ -138,7 +140,7 @@ function AnimeCard({ anime }: AnimeCardProps) {
 
               {/* Fallback for old format */}
               {!isOngoing && !isComplete && anime.eps && anime.eps.length > 0 && (
-                <div className="bg-blue-700/95 text-[11px] sm:text-xs px-2 py-0.5 inline-flex items-center rounded-full font-medium shadow-inner">
+                <div className="bg-pink-600 dark:bg-pink-700/95 text-[11px] sm:text-xs px-2 py-0.5 inline-flex items-center rounded-full font-medium shadow-sm">
                   <span className="text-white text-xs">{anime.eps[0]}</span>
                 </div>
               )}
@@ -152,6 +154,10 @@ function AnimeCard({ anime }: AnimeCardProps) {
 
 // Memoize component to prevent unnecessary re-renders
 export default memo(AnimeCard, (prevProps, nextProps) => {
-  // Only re-render if anime slug or bookmark status changes
-  return prevProps.anime.slug === nextProps.anime.slug;
+  // Only re-render if anime slug, title, or image changes
+  return (
+    prevProps.anime.slug === nextProps.anime.slug &&
+    prevProps.anime.judul === nextProps.anime.judul &&
+    prevProps.anime.gambar === nextProps.anime.gambar
+  );
 });

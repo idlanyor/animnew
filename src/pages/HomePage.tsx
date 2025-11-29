@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { Schedule } from '@/lib/api';
 import { useHomeData, useSchedule } from '@/hooks/useAnimeQuery';
 import AnimeCard from '@/components/AnimeCard';
 import TodayAnimeCarousel from '@/components/TodayAnimeCarousel';
@@ -8,7 +7,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import SEOHead from '@/components/SEOHead';
 import { generatePageSEOData } from '@/lib/seo';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faArrowTrendUp, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faArrowTrendUp, faClock, faFire, faChevronRight, faStar, faFilm, faCalendarAlt, faBolt } from '@fortawesome/free-solid-svg-icons';
 
 // Helper function to get current day in Indonesian
 const getDayInIndonesian = (): string => {
@@ -17,7 +16,7 @@ const getDayInIndonesian = (): string => {
   return days[today];
 };
 
-export default function HomePage() {
+function HomePage() {
   // Fetch data with React Query hooks - automatic caching and deduplication
   const { data: homeData, isLoading: homeLoading, isError: homeError } = useHomeData();
   const { data: scheduleData, isLoading: scheduleLoading } = useSchedule();
@@ -44,8 +43,8 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 via-gray-900 to-black">
-        <div className="glass-card px-8 py-6 rounded-2xl border border-white/10">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-200 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black transition-colors duration-300">
+        <div className="glass-card px-8 py-6 rounded-2xl border border-gray-300 dark:border-gray-700">
           <LoadingSpinner size="lg" text="Loading anime..." />
         </div>
       </div>
@@ -54,18 +53,18 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-950 via-gray-900 to-black">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-200 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black transition-colors duration-300">
         <div className="text-center">
-          <div className="glass-card px-8 py-6 rounded-2xl border border-white/10 mb-6 inline-block">
+          <div className="glass-card px-8 py-6 rounded-2xl border border-gray-300 dark:border-gray-700 mb-6 inline-block">
             <p className="text-red-500 text-xl mb-4">{error}</p>
           </div>
           <button
             onClick={() => window.location.reload()}
             className="group relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur rounded-xl"></div>
-            <div className="relative glass-card px-8 py-3 rounded-xl border border-white/20 group-hover:border-yellow-400/50 transition-all duration-300">
-              <span className="text-white font-medium bg-gradient-to-r from-white to-yellow-200 bg-clip-text group-hover:text-transparent transition-all">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur rounded-xl"></div>
+            <div className="relative glass-card px-8 py-3 rounded-xl border border-gray-300 dark:border-gray-700 group-hover:border-purple-400/50 transition-all duration-300">
+              <span className="text-gray-800 dark:text-white font-medium bg-gradient-to-r from-gray-800 to-purple-200 dark:from-white dark:to-purple-200 bg-clip-text group-hover:text-transparent transition-all">
                 Try Again
               </span>
             </div>
@@ -78,191 +77,258 @@ export default function HomePage() {
   return (
     <>
       <SEOHead {...seoData} />
-      <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black">
-      {/* Today's Anime Carousel */}
-      {todayAnime && todayAnime.anime_list.length > 0 && (
-        <TodayAnimeCarousel
-          animeList={todayAnime.anime_list}
-          dayName={todayAnime.day}
-        />
-      )}
+      <div className="min-h-screen bg-gray-50 dark:bg-black">
+        {/* Today's Anime Carousel */}
+        {todayAnime && todayAnime.anime_list.length > 0 && (
+          <TodayAnimeCarousel
+            animeList={todayAnime.anime_list}
+            dayName={todayAnime.day}
+          />
+        )}
 
-      {/* Ongoing Anime Section */}
-      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-gray-950 via-gray-900 to-black" aria-label="Anime Ongoing Terbaru">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex items-center justify-between mb-6 sm:mb-8 lg:mb-10">
-            <div className="relative inline-block">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-cyan-500/20 blur-xl"></div>
-              <div className="relative glass-card px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-500/20 to-cyan-500/20">
-                    <FontAwesomeIcon icon={faArrowTrendUp} className="text-yellow-400 h-5 w-5 sm:h-6 sm:w-6" />
-                  </div>
-                  <span className="bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent">
-                    Anime Ongoing Terbaru
-                  </span>
-                </h1>
+        {/* Quick Stats Section */}
+        <section className="py-6 bg-white dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-800">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-100 dark:border-purple-800/30">
+                <div className="p-2 rounded-lg bg-purple-500">
+                  <FontAwesomeIcon icon={faFire} className="text-white w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Ongoing</p>
+                  <p className="font-bold text-gray-800 dark:text-white">{ongoingAnime.length}+ Anime</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800/30">
+                <div className="p-2 rounded-lg bg-green-500">
+                  <FontAwesomeIcon icon={faStar} className="text-white w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Complete</p>
+                  <p className="font-bold text-gray-800 dark:text-white">{popularAnime.length}+ Anime</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-100 dark:border-blue-800/30">
+                <div className="p-2 rounded-lg bg-blue-500">
+                  <FontAwesomeIcon icon={faFilm} className="text-white w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Movies</p>
+                  <p className="font-bold text-gray-800 dark:text-white">500+ Film</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-100 dark:border-orange-800/30">
+                <div className="p-2 rounded-lg bg-orange-500">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="text-white w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Update</p>
+                  <p className="font-bold text-gray-800 dark:text-white">Setiap Hari</p>
+                </div>
               </div>
             </div>
-            <Link
-              to="/ongoing"
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur rounded-lg"></div>
-              <div className="relative glass-card px-4 py-2 rounded-lg border border-white/10 group-hover:border-yellow-400/50 transition-all">
-                <span className="text-yellow-400 group-hover:text-yellow-300 font-medium text-xs sm:text-sm lg:text-base">
-                  Lihat Semua →
-                </span>
+          </div>
+        </section>
+
+        {/* Ongoing Anime Section */}
+        <section className="py-10 sm:py-14 bg-gray-50 dark:bg-black" aria-label="Anime Ongoing Terbaru">
+          <div className="max-w-7xl mx-auto px-4">
+            {/* Section Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-purple-500 blur-lg opacity-40"></div>
+                  <div className="relative p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500">
+                    <FontAwesomeIcon icon={faBolt} className="text-white w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                    Ongoing Terbaru
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Episode baru setiap hari</p>
+                </div>
               </div>
-            </Link>
+              <Link
+                to="/ongoing"
+                className="group flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50 font-medium text-sm"
+              >
+                Lihat Semua
+                <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3 group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            {/* Anime Grid */}
+            {ongoingAnime.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5">
+                {ongoingAnime.map((anime) => (
+                  <AnimeCard key={anime.slug} anime={anime} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                <FontAwesomeIcon icon={faPlay} className="text-gray-300 dark:text-gray-600 text-5xl mb-4" />
+                <p className="text-gray-500 dark:text-gray-400">Tidak ada anime ongoing</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Complete Anime Section */}
+        <section className="py-10 sm:py-14 bg-white dark:bg-gray-900/30" aria-label="Anime Complete Sub Indo">
+          <div className="max-w-7xl mx-auto px-4">
+            {/* Section Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-green-500 blur-lg opacity-40"></div>
+                  <div className="relative p-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500">
+                    <FontAwesomeIcon icon={faStar} className="text-white w-5 h-5" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                    Tamat Sub Indo
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Koleksi anime lengkap</p>
+                </div>
+              </div>
+              <Link
+                to="/complete"
+                className="group flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 font-medium text-sm"
+              >
+                Lihat Semua
+                <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3 group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            {/* Anime Grid */}
+            {popularAnime.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5">
+                {popularAnime.map((anime) => (
+                  <AnimeCard key={anime.slug} anime={anime} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                <FontAwesomeIcon icon={faStar} className="text-gray-300 dark:text-gray-600 text-5xl mb-4" />
+                <p className="text-gray-500 dark:text-gray-400">Tidak ada anime complete</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Quick Navigation */}
+        <section className="py-10 bg-gray-50 dark:bg-black">
+          <div className="max-w-7xl mx-auto px-4">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-6 text-center">Jelajahi Lebih Banyak</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <Link to="/schedule" className="group p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/10">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 mb-3 group-hover:scale-110">
+                    <FontAwesomeIcon icon={faCalendarAlt} className="w-6 h-6" />
+                  </div>
+                  <span className="font-semibold text-gray-800 dark:text-white">Jadwal</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Rilis mingguan</span>
+                </div>
+              </Link>
+              <Link to="/genres" className="group p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-lg hover:shadow-pink-500/10">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-xl bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 mb-3 group-hover:scale-110">
+                    <FontAwesomeIcon icon={faFire} className="w-6 h-6" />
+                  </div>
+                  <span className="font-semibold text-gray-800 dark:text-white">Genre</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Cari favoritmu</span>
+                </div>
+              </Link>
+              <Link to="/movie" className="group p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mb-3 group-hover:scale-110">
+                    <FontAwesomeIcon icon={faFilm} className="w-6 h-6" />
+                  </div>
+                  <span className="font-semibold text-gray-800 dark:text-white">Movie</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Film anime</span>
+                </div>
+              </Link>
+              <Link to="/favorites" className="group p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-red-400 dark:hover:border-red-500 hover:shadow-lg hover:shadow-red-500/10">
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-3 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 mb-3 group-hover:scale-110">
+                    <FontAwesomeIcon icon={faStar} className="w-6 h-6" />
+                  </div>
+                  <span className="font-semibold text-gray-800 dark:text-white">Favorit</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">Bookmarkmu</span>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-14 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900/50 dark:to-black relative overflow-hidden" aria-label="Keunggulan KanataAnime">
+          {/* Background decorations */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-200 dark:bg-purple-900/20 rounded-full blur-3xl opacity-50"></div>
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-pink-200 dark:bg-pink-900/20 rounded-full blur-3xl opacity-50"></div>
           </div>
 
-          {ongoingAnime.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
-              {ongoingAnime.map((anime) => (
-                <AnimeCard key={anime.slug} anime={anime} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 sm:py-16">
-              <div className="glass-card inline-block px-8 py-6 rounded-2xl border border-white/10">
-                <p className="text-gray-400 text-base sm:text-lg">No ongoing anime found</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Complete Anime Section */}
-      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-black via-gray-900 to-gray-950" aria-label="Anime Complete Sub Indo">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex items-center justify-between mb-6 sm:mb-8 lg:mb-10">
-            <div className="relative inline-block">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-xl"></div>
-              <div className="relative glass-card px-4 sm:px-6 py-3 sm:py-4 rounded-2xl border border-white/10">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20">
-                    <FontAwesomeIcon icon={faPlay} className="text-blue-400 h-5 w-5 sm:h-6 sm:w-6" />
-                  </div>
-                  <span className="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                    Anime Complete Sub Indo
-                  </span>
-                </h2>
-              </div>
-            </div>
-            <Link
-              to="/complete"
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur rounded-lg"></div>
-              <div className="relative glass-card px-4 py-2 rounded-lg border border-white/10 group-hover:border-blue-400/50 transition-all">
-                <span className="text-blue-400 group-hover:text-blue-300 font-medium text-xs sm:text-sm lg:text-base">
-                  Lihat Semua →
-                </span>
-              </div>
-            </Link>
-          </div>
-
-          {popularAnime.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
-              {popularAnime.map((anime) => (
-                <AnimeCard key={anime.slug} anime={anime} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 sm:py-16">
-              <div className="glass-card inline-block px-8 py-6 rounded-2xl border border-white/10">
-                <p className="text-gray-400 text-base sm:text-lg">No complete anime found</p>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Enhanced Features Section */}
-      <section className="py-12 sm:py-16 lg:py-20 relative overflow-hidden bg-gradient-to-b from-gray-950 via-black to-gray-900" aria-label="Keunggulan KanataAnime">
-        {/* Background Effects */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          {/* Section Title */}
-          <div className="text-center mb-10 sm:mb-12 lg:mb-16">
-            <div className="inline-block">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
-                <span className="bg-gradient-to-r from-white via-cyan-100 to-blue-100 bg-clip-text text-transparent">
-                  Kenapa Pilih KanataAnime untuk Nonton Anime?
-                </span>
+          <div className="relative max-w-7xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white mb-3">
+                Kenapa <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">KanataAnime</span>?
               </h2>
-              <div className="h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent rounded-full"></div>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Platform streaming anime terbaik dengan berbagai keunggulan</p>
             </div>
-          </div>
 
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {/* Card 1 */}
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-amber-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative glass-card p-6 sm:p-8 rounded-2xl border border-white/10 hover:border-yellow-500/30 transition-all duration-500 text-center">
-                <div className="relative inline-block mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl blur-md opacity-50"></div>
-                  <div className="relative bg-gradient-to-br from-yellow-500 to-amber-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <FontAwesomeIcon icon={faPlay} className="text-white text-[32px]" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Feature 1 */}
+              <div className="group relative p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-purple-300 dark:hover:border-purple-700 shadow-sm hover:shadow-xl hover:shadow-purple-500/10">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-transparent rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3">
+                    <FontAwesomeIcon icon={faPlay} className="text-white text-xl" />
                   </div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Tanpa Iklan</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    Streaming anime HD 720p tanpa gangguan iklan. Nikmati pengalaman menonton yang lancar.
+                  </p>
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-yellow-400 transition-colors">
-                  Streaming Anime HD Tanpa Iklan
-                </h3>
-                <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                  Nonton anime dengan kualitas HD 720p tanpa gangguan iklan. Streaming lancar dan cepat untuk pengalaman menonton terbaik.
-                </p>
               </div>
-            </div>
 
-            {/* Card 2 */}
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative glass-card p-6 sm:p-8 rounded-2xl border border-white/10 hover:border-blue-500/30 transition-all duration-500 text-center">
-                <div className="relative inline-block mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl blur-md opacity-50"></div>
-                  <div className="relative bg-gradient-to-br from-blue-500 to-cyan-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <FontAwesomeIcon icon={faArrowTrendUp} className="text-white text-[32px]" />
+              {/* Feature 2 */}
+              <div className="group relative p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-pink-300 dark:hover:border-pink-700 shadow-sm hover:shadow-xl hover:shadow-pink-500/10">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-500/10 to-transparent rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3">
+                    <FontAwesomeIcon icon={faArrowTrendUp} className="text-white text-xl" />
                   </div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Update Harian</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    Episode terbaru diupdate setiap hari. Tidak ketinggalan anime favoritmu.
+                  </p>
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
-                  Anime Terbaru Update Setiap Hari
-                </h3>
-                <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                  Nonton episode anime ongoing terbaru yang diupdate setiap hari. Tidak ketinggalan anime favorit dengan subtitle Indonesia.
-                </p>
               </div>
-            </div>
 
-            {/* Card 3 */}
-            <div className="group relative sm:col-span-2 lg:col-span-1">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative glass-card p-6 sm:p-8 rounded-2xl border border-white/10 hover:border-cyan-500/30 transition-all duration-500 text-center">
-                <div className="relative inline-block mb-6">
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-purple-600 rounded-2xl blur-md opacity-50"></div>
-                  <div className="relative bg-gradient-to-br from-cyan-500 to-purple-600 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                    <FontAwesomeIcon icon={faClock} className="text-white text-[32px]" />
+              {/* Feature 3 */}
+              <div className="group relative p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 hover:border-orange-300 dark:hover:border-orange-700 shadow-sm hover:shadow-xl hover:shadow-orange-500/10">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-transparent rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3">
+                    <FontAwesomeIcon icon={faClock} className="text-white text-xl" />
                   </div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Koleksi Lengkap</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    Ribuan anime dari klasik hingga terbaru. Semua dengan subtitle Indonesia.
+                  </p>
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
-                  Koleksi Anime Terlengkap
-                </h3>
-                <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                  Ribuan anime ongoing, complete, dan movie sub indo tersedia. Dari anime klasik hingga anime terbaru musim ini.
-                </p>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
       </div>
     </>
   );
 }
+
+// Memoize HomePage to prevent unnecessary re-renders
+export default memo(HomePage);
 

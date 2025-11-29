@@ -7,7 +7,7 @@ const SANKA_BASE_URL = 'https://www.sankavollerei.com/anime'
 // Anime API instance
 const animeApi = axios.create({
   baseURL: ANIME_BASE_URL,
-  timeout: 15000,
+  timeout: 8000, // Reduced from 15s to 8s for better UX
   headers: {
     'Content-Type': 'application/json',
   },
@@ -16,7 +16,7 @@ const animeApi = axios.create({
 // Sanka Vollerei API instance (for movies)
 const sankaApi = axios.create({
   baseURL: SANKA_BASE_URL,
-  timeout: 15000,
+  timeout: 8000, // Reduced from 15s to 8s for better UX
   headers: {
     'Content-Type': 'application/json',
   },
@@ -778,8 +778,8 @@ export const getHomeData = async (): Promise<{ ongoing: AnimeItem[]; complete: A
   try {
     const response = await sankaApi.get<HomeResponse>('/home');
     if (response.data && response.data.status === 'success' && response.data.data) {
-      const ongoing = response.data.data.ongoing_anime.map(mapOngoingToAnimeItem);
-      const complete = response.data.data.complete_anime.map(mapCompleteToAnimeItem);
+      const ongoing = response.data.data.ongoing_anime.slice(0, 12).map(mapOngoingToAnimeItem); // Limit to 12 items
+      const complete = response.data.data.complete_anime.slice(0, 8).map(mapCompleteToAnimeItem); // Limit to 8 items
       return { ongoing, complete };
     }
     console.warn('Invalid response format, using mock data');
@@ -794,7 +794,7 @@ export const getOngoingAnime = async (page: number = 1): Promise<{ anime: AnimeI
   try {
     const response = await sankaApi.get<OngoingAnimeResponse>(`/ongoing-anime?page=${page}`);
     if (response.data && response.data.status === 'success' && response.data.data) {
-      const anime = response.data.data.ongoingAnimeData.map(mapOngoingToAnimeItem);
+      const anime = response.data.data.ongoingAnimeData.slice(0, 24).map(mapOngoingToAnimeItem); // Limit to 24 items per page
       return {
         anime,
         pagination: response.data.data.paginationData
@@ -832,7 +832,7 @@ export const getCompleteAnime = async (page: number = 1): Promise<{ anime: Anime
   try {
     const response = await sankaApi.get<CompleteAnimeResponse>(`/complete-anime/${page}`);
     if (response.data && response.data.status === 'success' && response.data.data) {
-      const anime = response.data.data.completeAnimeData.map(mapCompleteToAnimeItem);
+      const anime = response.data.data.completeAnimeData.slice(0, 24).map(mapCompleteToAnimeItem); // Limit to 24 items per page
       return {
         anime,
         pagination: response.data.data.paginationData
